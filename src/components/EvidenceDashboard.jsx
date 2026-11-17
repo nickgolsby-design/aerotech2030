@@ -1,6 +1,7 @@
 import { categories, evidence, evidenceById } from "../data/evidence.js";
 import { evidenceSource } from "../data/stakeholders.js";
 import { EVIDENCE_TAGS } from "../data/gameConfig.js";
+import FacilitatorNote from "./FacilitatorNote.jsx";
 
 export default function EvidenceDashboard({ evidenceIds, tags, onTag }) {
   const found = evidenceIds.map((id) => evidenceById[id]);
@@ -14,7 +15,7 @@ export default function EvidenceDashboard({ evidenceIds, tags, onTag }) {
   const blindSpots = coverage.filter((c) => c.items.length === 0);
 
   return (
-    <section className="panel">
+    <section className="panel" id="evidence">
       <hr />
 
       <h2>Investigation Coverage</h2>
@@ -29,7 +30,14 @@ export default function EvidenceDashboard({ evidenceIds, tags, onTag }) {
             className={`coverage-row${c.items.length === 0 ? " blind-spot" : ""}`}
           >
             <span className="coverage-label">{c.label}</span>
-            <div className="meter">
+            <div
+              className="meter"
+              role="progressbar"
+              aria-label={`${c.label} coverage`}
+              aria-valuemin={0}
+              aria-valuemax={c.total}
+              aria-valuenow={c.items.length}
+            >
               <div
                 className="meter-fill coverage-fill"
                 style={{ width: `${(c.items.length / c.total) * 100}%` }}
@@ -70,6 +78,7 @@ export default function EvidenceDashboard({ evidenceIds, tags, onTag }) {
                   <div>
                     {item.text}
                     <span className="muted"> — {evidenceSource[item.id]}</span>
+                    {item.critical && <FacilitatorNote>critical</FacilitatorNote>}
                   </div>
                   <select
                     aria-label="Classify evidence"

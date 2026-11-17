@@ -5,7 +5,8 @@ import {
   risks,
   risksById
 } from "../data/recommendation.js";
-import { validateRecommendation } from "../engine/outcomeEngine.js";
+import { validateRecommendation, riskSeverity } from "../engine/outcomeEngine.js";
+import FacilitatorNote from "./FacilitatorNote.jsx";
 
 export default function RecommendationPanel({
   platforms,
@@ -20,7 +21,7 @@ export default function RecommendationPanel({
   const chosenRiskIds = recommendation.risks.map((r) => r.riskId);
 
   return (
-    <section className="panel recommendation">
+    <section className="panel recommendation" id="recommendation">
       <hr />
 
       <h2>Board Recommendation</h2>
@@ -102,6 +103,23 @@ export default function RecommendationPanel({
                   </option>
                 ))}
             </select>
+            {slot.riskId && recommendation.platform && (
+              <FacilitatorNote as="div">
+                Severity{" "}
+                {riskSeverity(
+                  risksById[slot.riskId],
+                  recommendation.platform,
+                  recommendation.strategy || null
+                ).toFixed(1)}{" "}
+                for this option
+                {slot.mitigationId &&
+                  ` · mitigation quality ${
+                    risksById[slot.riskId].mitigations.find(
+                      (m) => m.id === slot.mitigationId
+                    ).quality
+                  }`}
+              </FacilitatorNote>
+            )}
           </div>
         ))}
       </fieldset>

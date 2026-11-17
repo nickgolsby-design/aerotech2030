@@ -29,7 +29,7 @@ export default function PlatformComparison({
   };
 
   return (
-    <section className="panel">
+    <section className="panel" id="comparison">
       <hr />
 
       <h2>Platform Comparison</h2>

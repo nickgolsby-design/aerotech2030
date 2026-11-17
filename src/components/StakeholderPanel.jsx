@@ -1,11 +1,21 @@
 import { GUARDED_RESPONSE } from "../data/stakeholders.js";
 import { trustLabel } from "../data/gameConfig.js";
+import { evidenceById } from "../data/evidence.js";
+import FacilitatorNote from "./FacilitatorNote.jsx";
 
 function TrustMeter({ value }) {
   const label = trustLabel(value);
   return (
-    <div className="trust" aria-label={`Trust ${value} of 100, ${label}`}>
-      <div className="meter">
+    <div className="trust">
+      <div
+        className="meter"
+        role="progressbar"
+        aria-label="Trust"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={value}
+        aria-valuetext={`${value}, ${label}`}
+      >
         <div
           className={`meter-fill trust-${label.toLowerCase()}`}
           style={{ width: `${value}%` }}
@@ -33,16 +43,13 @@ export default function StakeholderPanel({
     : [];
 
   return (
-    <section className="panel">
-      <h3>Questions Remaining: {questionsLeft}</h3>
+    <section className="panel" id="interviews">
       {questionsLeft === 0 && (
         <p className="notice">
           Your question budget is spent. Review your evidence and prepare
           your recommendation.
         </p>
       )}
-
-      <hr />
 
       <h2>Stakeholders</h2>
 
@@ -79,7 +86,7 @@ export default function StakeholderPanel({
           <TrustMeter value={trust[selected.id]} />
 
           {transcript.length > 0 && (
-            <ol className="transcript">
+            <ol className="transcript" aria-live="polite">
               {transcript.map((entry) => {
                 const question = selected.questions.find(
                   (q) => q.id === entry.questionId
@@ -111,6 +118,17 @@ export default function StakeholderPanel({
                 onClick={() => onAsk(selected.id, question.id)}
               >
                 {question.text}
+                <FacilitatorNote>
+                  {question.trustDelta > 0 ? "+" : ""}
+                  {question.trustDelta} trust ·{" "}
+                  {question.evidence.length === 0
+                    ? "no evidence"
+                    : question.evidence
+                        .map((id) =>
+                          evidenceById[id].critical ? "critical" : "minor"
+                        )
+                        .join(", ")}
+                </FacilitatorNote>
               </button>
             ))}
           </div>

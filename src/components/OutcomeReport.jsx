@@ -13,7 +13,7 @@ export default function OutcomeReport({
   outcome,
   recommendation,
   evidenceCount,
-  onRestart
+  onDebrief
 }) {
   const strategy = strategies.find((s) => s.id === outcome.strategy);
 
@@ -46,7 +46,14 @@ export default function OutcomeReport({
             {Object.entries(y.metrics).map(([key, value]) => (
               <div key={key} className="metric">
                 <span>{metricLabels[key]}</span>
-                <div className="meter">
+                <div
+                  className="meter"
+                  role="progressbar"
+                  aria-label={metricLabels[key]}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={value}
+                >
                   <div
                     className={`meter-fill band-bg-${band(value)}`}
                     style={{ width: `${value}%` }}
@@ -90,8 +97,8 @@ export default function OutcomeReport({
         </tbody>
       </table>
 
-      <button className="primary" onClick={onRestart}>
-        Restart simulation
+      <button className="primary no-print" onClick={onDebrief}>
+        Continue to debrief
       </button>
     </section>
   );

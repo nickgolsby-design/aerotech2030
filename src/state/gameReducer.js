@@ -12,8 +12,23 @@ import {
 } from "../engine/outcomeEngine.js";
 
 // Phases: "briefing" -> "investigation" -> "boardReview" -> "outcomes"
+//         <-> "debrief"
+export const PHASES = [
+  { id: "briefing", label: "Briefing" },
+  { id: "investigation", label: "Investigation" },
+  { id: "boardReview", label: "Board review" },
+  { id: "outcomes", label: "Outcomes" },
+  { id: "debrief", label: "Debrief" }
+];
+
+export const MAX_TEAM_NAME_LENGTH = 40;
+
 export const initialGameState = {
   phase: "briefing",
+  teamName: "",
+  // Timestamps (ms) passed in with actions so the reducer stays pure.
+  startedAt: null,
+  finishedAt: null,
   selectedId: null,
   questionsLeft: QUESTION_BUDGET,
   trust: Object.fromEntries(stakeholders.map((s) => [s.id, s.initialTrust])),
@@ -57,8 +72,19 @@ function updateRecommendation(state, changes) {
 
 export function gameReducer(state, action) {
   switch (action.type) {
-    case "START":
-      return { ...state, phase: "investigation" };
+    case "START": {
+      if (state.phase !== "briefing") return state;
+      const teamName = (action.teamName ?? "")
+        .trim()
+        .slice(0, MAX_TEAM_NAME_LENGTH);
+      if (!teamName) return state;
+      return {
+        ...state,
+        phase: "investigation",
+        teamName,
+        startedAt: action.now ?? null
+      };
+    }
 
     case "SELECT_STAKEHOLDER":
       return { ...state, selectedId: action.stakeholderId };
@@ -183,7 +209,17 @@ export function gameReducer(state, action) {
       const allAnswered = state.challengeIds.every(
         (id) => id in state.challengeAnswers
       );
-      return allAnswered ? { ...state, phase: "outcomes" } : state;
+      return allAnswered
+        ? { ...state, phase: "outcomes", finishedAt: action.now ?? null }
+        : state;
+    }
+
+    // Switch between the two results screens once the game is complete.
+    case "SHOW_RESULTS_VIEW": {
+      const resultsPhases = ["outcomes", "debrief"];
+      if (!resultsPhases.includes(state.phase)) return state;
+      if (!resultsPhases.includes(action.view)) return state;
+      return { ...state, phase: action.view };
     }
 
     case "RESTART":

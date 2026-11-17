@@ -10,6 +10,7 @@ import {
   stakeholderStance,
   stanceLabel
 } from "../engine/outcomeEngine.js";
+import FacilitatorNote from "./FacilitatorNote.jsx";
 
 function reactionText(name, delta) {
   if (delta >= 10) return `${name} looks convinced.`;
@@ -100,11 +101,12 @@ export default function BoardReview({ state, onAnswer, onShowOutcomes }) {
                   onClick={() => onAnswer(challengeId, option.id)}
                 >
                   {option.text}
+                  <FacilitatorNote>quality {option.quality}</FacilitatorNote>
                 </button>
               ))}
             </div>
             {answer !== undefined && (
-              <p className="reaction">
+              <p className="reaction" aria-live="polite">
                 {reactionText(
                   challenger.name,
                   challengeImpact(challengeId, answer, evidenceIds, trust)

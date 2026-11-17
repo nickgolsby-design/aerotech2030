@@ -2,8 +2,14 @@
    light and dark modes both work. */
 
 .game {
-  text-align: left;
-  padding: 40px;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px clamp(16px, 4vw, 40px) 64px;
+}
+
+/* Sections reached by in-page links sit below the sticky header. */
+.panel[id] {
+  scroll-margin-top: 120px;
 }
 
 .game h3 {
@@ -19,7 +25,7 @@
 .notice {
   margin: 8px 0;
   padding: 8px 12px;
-  border-left: 4px solid #d97706;
+  border-left: 4px solid var(--fair);
   background: rgba(217, 119, 6, 0.1);
 }
 
@@ -42,9 +48,10 @@
   text-align: left;
   font: inherit;
   color: var(--text-h);
-  background: var(--bg);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
+  box-shadow: var(--shadow);
   cursor: pointer;
 }
 
@@ -71,9 +78,9 @@
   transition: width 0.3s ease;
 }
 
-.trust-open { background: #16a34a; }
-.trust-cautious { background: #d97706; }
-.trust-guarded { background: #dc2626; }
+.trust-open { background: var(--good); }
+.trust-cautious { background: var(--fair); }
+.trust-guarded { background: var(--poor); }
 .coverage-fill { background: var(--accent); }
 
 .trust-label {
@@ -129,7 +136,7 @@
 
 .coverage-row.blind-spot .coverage-label,
 .coverage-row.blind-spot .coverage-count {
-  color: #dc2626;
+  color: var(--poor);
 }
 
 @media (max-width: 600px) {
@@ -216,12 +223,17 @@
   margin: 4px 0;
 }
 
+/* Risk on the first line, its mitigation underneath: labels are long. */
 .risk-row {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) minmax(0, 1fr);
-  gap: 8px;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 6px 8px;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 14px;
+}
+
+.risk-row > select:nth-of-type(2) {
+  grid-column: 2;
 }
 
 .risk-row select {
@@ -230,17 +242,8 @@
   min-width: 0;
 }
 
-@media (max-width: 700px) {
-  .risk-row {
-    grid-template-columns: 24px minmax(0, 1fr);
-  }
-  .risk-row select:last-child {
-    grid-column: 2;
-  }
-}
-
 .problems {
-  color: #dc2626;
+  color: var(--poor);
   font-size: 0.9em;
 }
 
@@ -249,7 +252,8 @@ button.primary {
   padding: 12px 24px;
   margin-top: 12px;
   cursor: pointer;
-  color: #fff;
+  font-weight: 600;
+  color: var(--accent-contrast);
   background: var(--accent);
   border: none;
   border-radius: 6px;
@@ -289,9 +293,9 @@ button.primary:disabled {
   background: var(--code-bg);
 }
 
-.stance-supportive { border-left-color: #16a34a; }
-.stance-neutral { border-left-color: #d97706; }
-.stance-opposed { border-left-color: #dc2626; }
+.stance-supportive { border-left-color: var(--good); }
+.stance-neutral { border-left-color: var(--fair); }
+.stance-opposed { border-left-color: var(--poor); }
 
 .challenge {
   margin: 16px 0;
@@ -313,12 +317,13 @@ button.primary:disabled {
   padding: 8px 16px;
   margin: 8px 0 16px;
   border-radius: 6px;
-  color: #fff;
+  border: 2px solid currentColor;
+  font-size: 1.1rem;
 }
 
-.verdict-approved { background: #16a34a; }
-.verdict-conditional { background: #d97706; }
-.verdict-rejected { background: #dc2626; }
+.verdict-approved { color: var(--good); }
+.verdict-conditional { color: var(--fair); }
+.verdict-rejected { color: var(--poor); }
 
 .years {
   display: grid;
@@ -337,12 +342,12 @@ button.primary:disabled {
   font-weight: 600;
 }
 
-.band-good { color: #16a34a; }
-.band-fair { color: #d97706; }
-.band-poor { color: #dc2626; }
-.band-bg-good { background: #16a34a; }
-.band-bg-fair { background: #d97706; }
-.band-bg-poor { background: #dc2626; }
+.band-good { color: var(--good); }
+.band-fair { color: var(--fair); }
+.band-poor { color: var(--poor); }
+.band-bg-good { background: var(--good); }
+.band-bg-fair { background: var(--fair); }
+.band-bg-poor { background: var(--poor); }
 
 .metric {
   display: grid;
@@ -366,10 +371,344 @@ button.primary:disabled {
   margin: 6px 0;
 }
 
-.event-positive::marker { color: #16a34a; }
-.event-negative::marker { color: #dc2626; }
-.event-neutral::marker { color: #d97706; }
+.event-positive::marker { color: var(--good); }
+.event-negative::marker { color: var(--poor); }
+.event-neutral::marker { color: var(--fair); }
 
 .drivers {
   min-width: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Header and navigation                                               */
+/* ------------------------------------------------------------------ */
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 10px clamp(16px, 4vw, 40px) 8px;
+}
+
+/* Header content lines up with .game content (1180px minus its padding). */
+.app-header > * {
+  max-width: calc(1180px - 2 * clamp(16px, 4vw, 40px));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.header-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  color: var(--text-h);
+  font-size: 1.1rem;
+}
+
+.team {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.header-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.header-stat {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+button.ghost {
+  background: transparent;
+}
+
+button.danger {
+  color: #fff;
+  background: var(--poor);
+  border-color: var(--poor);
+}
+
+.confirm {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.stepper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  list-style: none;
+  padding: 0;
+  margin-top: 8px;
+  font-size: 0.8rem;
+}
+
+.stepper li {
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.stepper li.done {
+  color: var(--good);
+  border-color: var(--good);
+}
+
+.stepper li.done::before {
+  content: "✓ ";
+}
+
+.stepper li.current {
+  color: var(--accent-contrast);
+  background: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.section-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.section-nav a {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Briefing                                                            */
+/* ------------------------------------------------------------------ */
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 16px 0 4px;
+}
+
+.briefing h2 {
+  margin-top: 0;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.briefing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.card {
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.card h3:first-child {
+  margin-top: 0;
+}
+
+.start-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.start-form .field {
+  margin: 0;
+  min-width: min(320px, 100%);
+}
+
+.start-form button.primary {
+  margin-top: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Debrief                                                             */
+/* ------------------------------------------------------------------ */
+
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.actions button.primary {
+  margin-top: 0;
+  padding: 6px 14px;
+}
+
+.result-summary p {
+  margin: 4px 0;
+}
+
+.lo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.lo-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.lo ul {
+  padding-left: 18px;
+  font-size: 0.92rem;
+}
+
+.learning-point {
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-bg);
+}
+
+.badge {
+  flex-shrink: 0;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1.5px solid currentColor;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.badge-good { color: var(--good); }
+.badge-fair { color: var(--fair); }
+.badge-poor { color: var(--poor); }
+
+.answer-review li,
+.missed li {
+  margin-bottom: 12px;
+}
+
+.answer-review p {
+  margin: 2px 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Facilitator mode                                                    */
+/* ------------------------------------------------------------------ */
+
+.facilitator-note {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 0 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b21a8;
+  background: #f3e8ff;
+  border: 1px dashed #a855f7;
+  border-radius: 4px;
+}
+
+div.facilitator-note {
+  display: block;
+  grid-column: 2 / -1;
+  margin: 0;
+  width: fit-content;
+}
+
+.facilitator-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  color: #6b21a8;
+  background: #f3e8ff;
+  border: 1px dashed #a855f7;
+  border-radius: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .facilitator-note,
+  .facilitator-panel {
+    color: #e9d5ff;
+    background: #3b0764;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Print: debrief and outcomes as a clean report                       */
+/* ------------------------------------------------------------------ */
+
+@media print {
+  :root {
+    color-scheme: light;
+    --text: #222;
+    --text-h: #000;
+    --bg: #fff;
+    --surface: #fff;
+    --border: #bbb;
+    --shadow: none;
+    font-size: 11pt;
+  }
+
+  .app-header {
+    position: static;
+    box-shadow: none;
+  }
+
+  .no-print,
+  .stepper,
+  .header-stats button,
+  .confirm {
+    display: none !important;
+  }
+
+  .game {
+    padding: 0;
+    max-width: none;
+  }
+
+  .card,
+  .year-card,
+  .lo,
+  .answer-review li {
+    break-inside: avoid;
+  }
 }
