@@ -1,46 +1,61 @@
-export const stakeholders = [
+const stakeholders = [
   {
-    id: 1,
-    name: "Finance Director",
+    name: "CEO",
     influence: 95,
-
-    evidence: {
-      text: "Projects above £5M require additional board approval.",
-      category: "cost",
-      weight: 10
-    },
-
-    responses: {
-      cost: [
-        "Licence costs are only a fraction of programme costs.",
-        "Training and productivity losses must also be considered."
-      ],
-
-      budget: [
-        "Board scrutiny increases significantly beyond £5M."
-      ]
-    }
+    category: "future",
+    evidence:
+      "The Board wants AeroTech to expand into digitally-enabled aerospace programmes.",
+    response:
+      "Future competitiveness is my primary concern."
   },
 
   {
-    id: 2,
+    name: "Finance Director",
+    influence: 95,
+    category: "cost",
+    evidence:
+      "Projects above £5M require additional board approval.",
+    response:
+      "Migration costs must include licences, training and productivity loss."
+  },
+
+  {
     name: "Manufacturing Director",
     influence: 85,
+    category: "manufacturing",
+    evidence:
+      "Existing CAM workflows are heavily dependent on CATIA outputs.",
+    response:
+      "Production disruption is my biggest concern."
+  },
 
-    evidence: {
-      text: "Existing CAM workflows depend on CATIA outputs.",
-      category: "manufacturing",
-      weight: 10
-    },
+  {
+    name: "Chief Design Engineer",
+    influence: 90,
+    category: "workforce",
+    evidence:
+      "Many senior CAD engineers are approaching retirement.",
+    response:
+      "Capability retention and productivity matter most."
+  },
 
-    responses: {
-      manufacturing: [
-        "Production disruption is my largest concern."
-      ],
+  {
+    name: "IT Manager",
+    influence: 75,
+    category: "cybersecurity",
+    evidence:
+      "Cybersecurity risks are increasing around ageing engineering software.",
+    response:
+      "Patch support and software lifecycle are major concerns."
+  },
 
-      cam: [
-        "CAM migration could affect established processes."
-      ]
-    }
+  {
+    name: "Quality Manager",
+    influence: 80,
+    category: "compliance",
+    evidence:
+      "Certification effort is frequently underestimated.",
+    response:
+      "Compliance and traceability cannot be compromised."
   }
 ];
