@@ -6,8 +6,8 @@ export default function EvidenceDashboard({ evidence }) {
       <h2>Evidence Log</h2>
 
       <ul>
-        {evidence.map((item, index) => (
-          <li key={index}>{item}</li>
+        {evidence.map((item) => (
+          <li key={item.stakeholderId}>{item.text}</li>
         ))}
       </ul>
     </>

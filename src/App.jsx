@@ -1,85 +1,50 @@
-import { useState } from "react";
+import { useReducer } from "react";
 import BriefingScreen from "./components/BriefingScreen.jsx";
 import StakeholderPanel from "./components/StakeholderPanel.jsx";
 import EvidenceDashboard from "./components/EvidenceDashboard.jsx";
 import RecommendationPanel from "./components/RecommendationPanel.jsx";
 import OutcomeReport from "./components/OutcomeReport.jsx";
-
-const stakeholders = [
-  {
-    name: "Finance Director",
-    influence: 95,
-    evidence:
-      "Projects above £5M require board approval and may delay implementation.",
-    response:
-      "Migration costs must include licences, training and productivity loss."
-  },
-  {
-    name: "Manufacturing Director",
-    influence: 85,
-    evidence:
-      "Existing CAM workflows are heavily dependent on CATIA outputs.",
-    response:
-      "Production disruption is my biggest concern during migration."
-  },
-  {
-    name: "IT Manager",
-    influence: 75,
-    evidence:
-      "Cybersecurity concerns are increasing around ageing software.",
-    response:
-      "Support lifecycle and patching are becoming increasingly important."
-  }
-];
+import { stakeholders } from "./data/stakeholders.js";
+import { platforms } from "./data/platformProfiles.js";
+import { gameReducer, initialGameState } from "./state/gameReducer.js";
 
 export default function App() {
-  const [started, setStarted] = useState(false);
-  const [selected, setSelected] = useState(null);
-  const [evidence, setEvidence] = useState([]);
-  const [questionsLeft, setQuestionsLeft] = useState(12);
-  const [decision, setDecision] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [state, dispatch] = useReducer(gameReducer, initialGameState);
 
-  const consultStakeholder = (stakeholder) => {
-    setSelected(stakeholder);
-
-    if (
-      !evidence.includes(stakeholder.evidence) &&
-      questionsLeft > 0
-    ) {
-      setEvidence([...evidence, stakeholder.evidence]);
-      setQuestionsLeft(questionsLeft - 1);
-    }
-  };
-
-  if (!started) {
-    return <BriefingScreen onStart={() => setStarted(true)} />;
+  if (!state.started) {
+    return <BriefingScreen onStart={() => dispatch({ type: "START" })} />;
   }
+
+  const selected =
+    stakeholders.find((stakeholder) => stakeholder.id === state.selectedId) ??
+    null;
 
   return (
     <div style={{ padding: "40px" }}>
       <h1>AeroTech 2030</h1>
 
-      <h3>Questions Remaining: {questionsLeft}</h3>
-
       <StakeholderPanel
         stakeholders={stakeholders}
         selected={selected}
-        onConsult={consultStakeholder}
+        questionsLeft={state.questionsLeft}
+        onConsult={(stakeholder) => dispatch({ type: "CONSULT", stakeholder })}
       />
 
-      <EvidenceDashboard evidence={evidence} />
+      <EvidenceDashboard evidence={state.evidence} />
 
       <RecommendationPanel
-        decision={decision}
-        onDecisionChange={setDecision}
-        onSubmit={() => setSubmitted(true)}
+        platforms={platforms}
+        decision={state.decision}
+        onDecisionChange={(decision) =>
+          dispatch({ type: "SET_DECISION", decision })
+        }
+        onSubmit={() => dispatch({ type: "SUBMIT" })}
       />
 
-      {submitted && (
+      {state.submitted && (
         <OutcomeReport
-          decision={decision}
-          evidenceCount={evidence.length}
+          decision={state.decision}
+          evidenceCount={state.evidence.length}
         />
       )}
     </div>

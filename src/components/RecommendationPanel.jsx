@@ -1,4 +1,5 @@
 export default function RecommendationPanel({
+  platforms,
   decision,
   onDecisionChange,
   onSubmit
@@ -14,10 +15,9 @@ export default function RecommendationPanel({
         onChange={(event) => onDecisionChange(event.target.value)}
       >
         <option value="">Select Platform</option>
-        <option>Stay with CATIA V5</option>
-        <option>3DEXPERIENCE</option>
-        <option>Siemens NX</option>
-        <option>PTC Creo</option>
+        {platforms.map((platform) => (
+          <option key={platform}>{platform}</option>
+        ))}
       </select>
 
       <button

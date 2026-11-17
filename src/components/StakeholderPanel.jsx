@@ -1,17 +1,20 @@
 export default function StakeholderPanel({
   stakeholders,
   selected,
+  questionsLeft,
   onConsult
 }) {
   return (
     <>
+      <h3>Questions Remaining: {questionsLeft}</h3>
+
       <hr />
 
       <h2>Stakeholders</h2>
 
       {stakeholders.map((stakeholder) => (
         <button
-          key={stakeholder.name}
+          key={stakeholder.id}
           style={{
             marginRight: "10px",
             marginBottom: "10px"
