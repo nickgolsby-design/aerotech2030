@@ -1,0 +1,185 @@
+/* Investigation screen styles. Uses the colour tokens from index.css so
+   light and dark modes both work. */
+
+.game {
+  text-align: left;
+  padding: 40px;
+}
+
+.game h3 {
+  color: var(--text-h);
+  margin: 16px 0 8px;
+}
+
+.muted {
+  color: var(--text);
+  font-size: 0.85em;
+}
+
+.notice {
+  margin: 8px 0;
+  padding: 8px 12px;
+  border-left: 4px solid #d97706;
+  background: rgba(217, 119, 6, 0.1);
+}
+
+.panel p {
+  margin: 4px 0;
+}
+
+/* Stakeholder grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+.stakeholder-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  text-align: left;
+  font: inherit;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.stakeholder-card:hover,
+.stakeholder-card:focus-visible {
+  border-color: var(--accent-border);
+}
+
+.stakeholder-card.selected {
+  border: 2px solid var(--accent);
+  background: var(--accent-bg);
+}
+
+/* Meters (trust + coverage) */
+.meter {
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.meter-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.trust-open { background: #16a34a; }
+.trust-cautious { background: #d97706; }
+.trust-guarded { background: #dc2626; }
+.coverage-fill { background: var(--accent); }
+
+.trust-label {
+  font-size: 0.8em;
+}
+
+/* Interview */
+.transcript {
+  padding-left: 20px;
+}
+
+.transcript li {
+  margin-bottom: 12px;
+}
+
+.question {
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.question-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.question-list button {
+  font: inherit;
+  text-align: left;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.question-list button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Coverage */
+.coverage {
+  display: grid;
+  gap: 6px;
+  max-width: 640px;
+}
+
+.coverage-row {
+  display: grid;
+  grid-template-columns: 220px 1fr 120px;
+  align-items: center;
+  gap: 12px;
+}
+
+.coverage-row.blind-spot .coverage-label,
+.coverage-row.blind-spot .coverage-count {
+  color: #dc2626;
+}
+
+@media (max-width: 600px) {
+  .coverage-row {
+    grid-template-columns: 1fr 90px;
+  }
+  .coverage-row .meter {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+/* Evidence log */
+.evidence-group ul {
+  list-style: none;
+  padding: 0;
+}
+
+.evidence-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Comparison table */
+.table-scroll {
+  overflow-x: auto;
+}
+
+.comparison {
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.comparison th,
+.comparison td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+
+.comparison th[scope="row"] {
+  text-align: left;
+  font-weight: 500;
+}
+
+.comparison tr.unknown td:not(:nth-child(2)) {
+  color: var(--text);
+  opacity: 0.6;
+}

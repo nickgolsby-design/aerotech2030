@@ -2,11 +2,13 @@ import { useReducer } from "react";
 import BriefingScreen from "./components/BriefingScreen.jsx";
 import StakeholderPanel from "./components/StakeholderPanel.jsx";
 import EvidenceDashboard from "./components/EvidenceDashboard.jsx";
+import PlatformComparison from "./components/PlatformComparison.jsx";
 import RecommendationPanel from "./components/RecommendationPanel.jsx";
 import OutcomeReport from "./components/OutcomeReport.jsx";
-import { stakeholders } from "./data/stakeholders.js";
+import { stakeholders, stakeholdersById } from "./data/stakeholders.js";
 import { platforms } from "./data/platformProfiles.js";
 import { gameReducer, initialGameState } from "./state/gameReducer.js";
+import "./components/game.css";
 
 export default function App() {
   const [state, dispatch] = useReducer(gameReducer, initialGameState);
@@ -15,22 +17,42 @@ export default function App() {
     return <BriefingScreen onStart={() => dispatch({ type: "START" })} />;
   }
 
-  const selected =
-    stakeholders.find((stakeholder) => stakeholder.id === state.selectedId) ??
-    null;
+  const selected = stakeholdersById[state.selectedId] ?? null;
 
   return (
-    <div style={{ padding: "40px" }}>
+    <div className="game">
       <h1>AeroTech 2030</h1>
 
       <StakeholderPanel
         stakeholders={stakeholders}
         selected={selected}
+        trust={state.trust}
+        interviews={state.interviews}
         questionsLeft={state.questionsLeft}
-        onConsult={(stakeholder) => dispatch({ type: "CONSULT", stakeholder })}
+        onSelect={(stakeholderId) =>
+          dispatch({ type: "SELECT_STAKEHOLDER", stakeholderId })
+        }
+        onAsk={(stakeholderId, questionId) =>
+          dispatch({ type: "ASK", stakeholderId, questionId })
+        }
       />
 
-      <EvidenceDashboard evidence={state.evidence} />
+      <EvidenceDashboard
+        evidenceIds={state.evidenceIds}
+        tags={state.tags}
+        onTag={(evidenceId, tag) =>
+          dispatch({ type: "TAG_EVIDENCE", evidenceId, tag })
+        }
+      />
+
+      <PlatformComparison
+        platforms={platforms}
+        evidenceIds={state.evidenceIds}
+        weights={state.weights}
+        onWeightChange={(criterionId, weight) =>
+          dispatch({ type: "SET_WEIGHT", criterionId, weight })
+        }
+      />
 
       <RecommendationPanel
         platforms={platforms}
@@ -44,7 +66,7 @@ export default function App() {
       {state.submitted && (
         <OutcomeReport
           decision={state.decision}
-          evidenceCount={state.evidence.length}
+          evidenceCount={state.evidenceIds.length}
         />
       )}
     </div>
