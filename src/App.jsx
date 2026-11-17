@@ -1,4 +1,9 @@
 import { useState } from "react";
+import BriefingScreen from "./components/BriefingScreen.jsx";
+import StakeholderPanel from "./components/StakeholderPanel.jsx";
+import EvidenceDashboard from "./components/EvidenceDashboard.jsx";
+import RecommendationPanel from "./components/RecommendationPanel.jsx";
+import OutcomeReport from "./components/OutcomeReport.jsx";
 
 const stakeholders = [
   {
@@ -48,120 +53,34 @@ export default function App() {
   };
 
   if (!started) {
-    return (
-      <div style={{ padding: "40px" }}>
-        <h1>AeroTech Precision Ltd</h1>
-
-        <h2>Strategic Board Memorandum</h2>
-
-        <p>
-          AeroTech has used CATIA V5 for over 15 years.
-        </p>
-
-        <p>
-          A replacement strategy must be recommended.
-        </p>
-
-        <button onClick={() => setStarted(true)}>
-          Begin Consultancy Engagement
-        </button>
-      </div>
-    );
+    return <BriefingScreen onStart={() => setStarted(true)} />;
   }
 
   return (
     <div style={{ padding: "40px" }}>
       <h1>AeroTech 2030</h1>
 
-      <h3>
-        Questions Remaining: {questionsLeft}
-      </h3>
+      <h3>Questions Remaining: {questionsLeft}</h3>
 
-      <hr />
+      <StakeholderPanel
+        stakeholders={stakeholders}
+        selected={selected}
+        onConsult={consultStakeholder}
+      />
 
-      <h2>Stakeholders</h2>
+      <EvidenceDashboard evidence={evidence} />
 
-      {stakeholders.map((stakeholder) => (
-        <button
-          key={stakeholder.name}
-          style={{
-            marginRight: "10px",
-            marginBottom: "10px"
-          }}
-          onClick={() =>
-            consultStakeholder(stakeholder)
-          }
-        >
-          {stakeholder.name}
-        </button>
-      ))}
-
-      {selected && (
-        <>
-          <hr />
-
-          <h2>{selected.name}</h2>
-
-          <p>{selected.response}</p>
-        </>
-      )}
-
-      <hr />
-
-      <h2>Evidence Log</h2>
-
-      <ul>
-        {evidence.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
-
-      <hr />
-
-      <h2>Board Recommendation</h2>
-
-      <select
-        value={decision}
-        onChange={(e) =>
-          setDecision(e.target.value)
-        }
-      >
-        <option value="">
-          Select Platform
-        </option>
-        <option>Stay with CATIA V5</option>
-        <option>3DEXPERIENCE</option>
-        <option>Siemens NX</option>
-        <option>PTC Creo</option>
-      </select>
-
-      <button
-        style={{ marginLeft: "10px" }}
-        onClick={() => setSubmitted(true)}
-      >
-        Present to Board
-      </button>
+      <RecommendationPanel
+        decision={decision}
+        onDecisionChange={setDecision}
+        onSubmit={() => setSubmitted(true)}
+      />
 
       {submitted && (
-        <div style={{ marginTop: "30px" }}>
-          <h2>Board Outcome</h2>
-
-          <p>
-            Recommendation:
-            {" "}
-            {decision}
-          </p>
-
-          <p>
-            Evidence Gathered:
-            {" "}
-            {evidence.length}
-          </p>
-
-          <p>
-            Stakeholder engagement completed.
-          </p>
-        </div>
+        <OutcomeReport
+          decision={decision}
+          evidenceCount={evidence.length}
+        />
       )}
     </div>
   );
