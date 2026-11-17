@@ -5,9 +5,15 @@ import {
 } from "../data/gameConfig.js";
 import { stakeholders, stakeholdersById } from "../data/stakeholders.js";
 import { criteria } from "../data/platformProfiles.js";
+import { STAY_PLATFORM, RISK_SLOTS } from "../data/recommendation.js";
+import {
+  selectChallenges,
+  validateRecommendation
+} from "../engine/outcomeEngine.js";
 
+// Phases: "briefing" -> "investigation" -> "boardReview" -> "outcomes"
 export const initialGameState = {
-  started: false,
+  phase: "briefing",
   selectedId: null,
   questionsLeft: QUESTION_BUDGET,
   trust: Object.fromEntries(stakeholders.map((s) => [s.id, s.initialTrust])),
@@ -21,21 +27,45 @@ export const initialGameState = {
   weights: Object.fromEntries(
     criteria.map((c) => [c.id, DEFAULT_CRITERION_WEIGHT])
   ),
-  decision: "",
-  submitted: false
+  recommendation: {
+    platform: "",
+    strategy: "",
+    risks: Array.from({ length: RISK_SLOTS }, () => ({
+      riskId: "",
+      mitigationId: ""
+    })),
+    changeApproach: "",
+    rationale: ""
+  },
+  // Board review: challenge ids chosen at submission, and answers given.
+  challengeIds: [],
+  challengeAnswers: {}
 };
 
 const clamp = (value) => Math.max(0, Math.min(100, value));
 
+const RECOMMENDATION_FIELDS = new Set([
+  "platform",
+  "strategy",
+  "changeApproach",
+  "rationale"
+]);
+
+function updateRecommendation(state, changes) {
+  return { ...state, recommendation: { ...state.recommendation, ...changes } };
+}
+
 export function gameReducer(state, action) {
   switch (action.type) {
     case "START":
-      return { ...state, started: true };
+      return { ...state, phase: "investigation" };
 
     case "SELECT_STAKEHOLDER":
       return { ...state, selectedId: action.stakeholderId };
 
     case "ASK": {
+      if (state.phase !== "investigation") return state;
+
       const stakeholder = stakeholdersById[action.stakeholderId];
       const question = stakeholder?.questions.find(
         (q) => q.id === action.questionId
@@ -91,11 +121,73 @@ export function gameReducer(state, action) {
         weights: { ...state.weights, [action.criterionId]: action.weight }
       };
 
-    case "SET_DECISION":
-      return { ...state, decision: action.decision };
+    case "SET_RECOMMENDATION": {
+      if (state.phase !== "investigation") return state;
+      if (!RECOMMENDATION_FIELDS.has(action.field)) return state;
 
-    case "SUBMIT":
-      return { ...state, submitted: true };
+      const changes = { [action.field]: action.value };
+      // Staying on V5 has no implementation strategy.
+      if (action.field === "platform" && action.value === STAY_PLATFORM) {
+        changes.strategy = "";
+      }
+      return updateRecommendation(state, changes);
+    }
+
+    case "SET_RISK": {
+      if (state.phase !== "investigation") return state;
+      const risks = state.recommendation.risks.map((slot, i) =>
+        i === action.index ? { riskId: action.riskId, mitigationId: "" } : slot
+      );
+      return updateRecommendation(state, { risks });
+    }
+
+    case "SET_MITIGATION": {
+      if (state.phase !== "investigation") return state;
+      const risks = state.recommendation.risks.map((slot, i) =>
+        i === action.index ? { ...slot, mitigationId: action.mitigationId } : slot
+      );
+      return updateRecommendation(state, { risks });
+    }
+
+    case "SUBMIT": {
+      if (state.phase !== "investigation") return state;
+      if (validateRecommendation(state.recommendation).length > 0) return state;
+
+      return {
+        ...state,
+        phase: "boardReview",
+        challengeIds: selectChallenges(
+          state.recommendation.platform,
+          state.evidenceIds
+        ),
+        challengeAnswers: {}
+      };
+    }
+
+    case "ANSWER_CHALLENGE": {
+      if (state.phase !== "boardReview") return state;
+      if (!state.challengeIds.includes(action.challengeId)) return state;
+      if (action.challengeId in state.challengeAnswers) return state;
+
+      return {
+        ...state,
+        challengeAnswers: {
+          ...state.challengeAnswers,
+          [action.challengeId]: action.optionId
+        }
+      };
+    }
+
+    case "SHOW_OUTCOMES": {
+      if (state.phase !== "boardReview") return state;
+      const allAnswered = state.challengeIds.every(
+        (id) => id in state.challengeAnswers
+      );
+      return allAnswered ? { ...state, phase: "outcomes" } : state;
+    }
+
+    case "RESTART":
+      return initialGameState;
 
     default:
       return state;
