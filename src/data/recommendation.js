@@ -1,5 +1,6 @@
 // Content for the recommendation form and the outcome engine.
 // `quality` and `exposure` values are hidden from students.
+import riskData from "./risks.json" with { type: "json" };
 
 export const STAY_PLATFORM = "Stay with CATIA V5";
 
@@ -50,168 +51,11 @@ export const changeApproaches = [
   }
 ];
 
-// exposure: base severity (0–3) per platform.
-// strategyFactor: multiplier per implementation strategy (default 1).
-// mitigations: quality 1 = strong, 0.5 = partial, 0 = ineffective.
-export const risks = [
-  {
-    id: "production-disruption",
-    label: "Production disruption during CAM migration",
-    category: "manufacturing",
-    exposure: { "Stay with CATIA V5": 0, "3DEXPERIENCE": 2, "Siemens NX": 3, "PTC Creo": 3 },
-    strategyFactor: { bigbang: 1.5, phased: 1, hybrid: 0.6 },
-    mitigations: [
-      { id: "pd-shutdown", label: "Cut over during the summer shutdown", quality: 0.5 },
-      {
-        id: "pd-parallel",
-        label: "Pilot one part family and parallel-run NC output before cut-over",
-        quality: 1
-      },
-      { id: "pd-suppliers", label: "Ask suppliers to absorb any delays", quality: 0 }
-    ]
-  },
-  {
-    id: "productivity-dip",
-    label: "Engineering productivity dip during retraining",
-    category: "workforce",
-    exposure: { "Stay with CATIA V5": 0, "3DEXPERIENCE": 2, "Siemens NX": 3, "PTC Creo": 3 },
-    strategyFactor: { bigbang: 1.5, phased: 1, hybrid: 0.8 },
-    mitigations: [
-      { id: "pdip-overtime", label: "Use overtime to catch up after go-live", quality: 0 },
-      { id: "pdip-elearning", label: "Vendor e-learning for all users", quality: 0.5 },
-      {
-        id: "pdip-rolebased",
-        label: "Role-based training with super-users and a budgeted productivity contingency",
-        quality: 1
-      }
-    ]
-  },
-  {
-    id: "skills-loss",
-    label: "Loss of expert knowledge as senior engineers retire",
-    category: "workforce",
-    exposure: { "Stay with CATIA V5": 2, "3DEXPERIENCE": 2, "Siemens NX": 2, "PTC Creo": 2 },
-    mitigations: [
-      {
-        id: "sl-pairing",
-        label: "Pair retiring engineers with juniors in a structured knowledge-capture programme",
-        quality: 1
-      },
-      { id: "sl-docs", label: "Ask senior staff to document their methods", quality: 0 },
-      { id: "sl-contractors", label: "Hire contractors to cover gaps", quality: 0.5 }
-    ]
-  },
-  {
-    id: "legacy-data",
-    label: "Legacy V5 data becomes unusable or unverifiable",
-    category: "compliance",
-    exposure: { "Stay with CATIA V5": 0, "3DEXPERIENCE": 1, "Siemens NX": 3, "PTC Creo": 3 },
-    strategyFactor: { bigbang: 1.3, phased: 1, hybrid: 0.7 },
-    mitigations: [
-      { id: "ld-bulk", label: "Bulk-translate all historic data at go-live", quality: 0.5 },
-      { id: "ld-pdf", label: "Archive legacy parts as PDF drawings", quality: 0 },
-      {
-        id: "ld-retain",
-        label: "Retain V5 access for legacy parts and migrate only active parts, with verification",
-        quality: 1
-      }
-    ]
-  },
-  {
-    id: "certification",
-    label: "Certification and traceability gaps after migration",
-    category: "compliance",
-    exposure: { "Stay with CATIA V5": 0, "3DEXPERIENCE": 2, "Siemens NX": 3, "PTC Creo": 3 },
-    strategyFactor: { bigbang: 1.3, phased: 1, hybrid: 0.8 },
-    mitigations: [
-      {
-        id: "cert-plan",
-        label: "Agree a verification plan with Quality and customers before migration",
-        quality: 1
-      },
-      { id: "cert-after", label: "Re-certify affected parts after go-live", quality: 0.5 },
-      { id: "cert-assume", label: "Treat translated models as equivalent", quality: 0 }
-    ]
-  },
-  {
-    id: "customer-misalignment",
-    label: "Misalignment with customer platforms and data requirements",
-    category: "supplychain",
-    exposure: { "Stay with CATIA V5": 3, "3DEXPERIENCE": 0, "Siemens NX": 2, "PTC Creo": 3 },
-    mitigations: [
-      { id: "cm-step", label: "Exchange neutral STEP files with customers", quality: 0.5 },
-      {
-        id: "cm-align",
-        label: "Agree native-data exchange with Airbus and Rolls-Royce before go-live",
-        quality: 1
-      },
-      { id: "cm-ignore", label: "Expect customers to adapt to AeroTech's choice", quality: 0 }
-    ]
-  },
-  {
-    id: "cost-overrun",
-    label: "Programme cost overrun and renewal price rises",
-    category: "cost",
-    exposure: { "Stay with CATIA V5": 1, "3DEXPERIENCE": 3, "Siemens NX": 2, "PTC Creo": 2 },
-    strategyFactor: { bigbang: 1, phased: 1, hybrid: 1.4 },
-    mitigations: [
-      { id: "co-discount", label: "Negotiate the largest year-one discount", quality: 0 },
-      {
-        id: "co-tco",
-        label: "Whole-life cost business case with stage-gated funding",
-        quality: 1
-      },
-      { id: "co-cap", label: "Cap the licence budget", quality: 0.5 }
-    ]
-  },
-  {
-    id: "security",
-    label: "Security exposure from unsupported software",
-    category: "cybersecurity",
-    exposure: { "Stay with CATIA V5": 3, "3DEXPERIENCE": 0, "Siemens NX": 0, "PTC Creo": 0 },
-    mitigations: [
-      { id: "sec-firewall", label: "Isolate CAD workstations behind extra firewall rules", quality: 0.5 },
-      {
-        id: "sec-roadmap",
-        label: "Fund a migration roadmap to a supported release within two years",
-        quality: 1
-      },
-      { id: "sec-accept", label: "Accept the risk; CAD is not a likely target", quality: 0 }
-    ]
-  },
-  {
-    id: "cae-breakage",
-    label: "Broken links between CAD and simulation tools",
-    category: "simulation",
-    exposure: { "Stay with CATIA V5": 0, "3DEXPERIENCE": 1, "Siemens NX": 2, "PTC Creo": 2 },
-    strategyFactor: { bigbang: 1.2, phased: 1, hybrid: 0.8 },
-    mitigations: [
-      {
-        id: "cae-validate",
-        label: "Validate the Abaqus integration in the pilot before rollout",
-        quality: 1
-      },
-      { id: "cae-later", label: "Address simulation in a later phase", quality: 0 },
-      { id: "cae-remesh", label: "Re-mesh analysis models when needed", quality: 0.5 }
-    ]
-  },
-  {
-    id: "change-resistance",
-    label: "Staff resistance and change fatigue",
-    category: "workforce",
-    exposure: { "Stay with CATIA V5": 1, "3DEXPERIENCE": 2, "Siemens NX": 3, "PTC Creo": 3 },
-    strategyFactor: { bigbang: 1.4, phased: 1, hybrid: 0.8 },
-    mitigations: [
-      { id: "cr-comms", label: "Regular communications from senior management", quality: 0.5 },
-      { id: "cr-enforce", label: "Make adoption a performance objective", quality: 0 },
-      {
-        id: "cr-involve",
-        label: "Involve engineers in platform evaluation and pilot design",
-        quality: 1
-      }
-    ]
-  }
-];
+// Risks live in risks.json: { id, label, category, exposure, strategyFactor?, mitigations[] }
+//   exposure: base severity (0–3) per platform.
+//   strategyFactor: multiplier per implementation strategy (default 1).
+//   mitigations: { id, label, quality } — 1 = strong, 0.5 = partial, 0 = ineffective.
+export const risks = riskData;
 
 export const risksById = Object.fromEntries(risks.map((r) => [r.id, r]));
 
