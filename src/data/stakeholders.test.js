@@ -16,6 +16,8 @@ describe("stakeholders.json", () => {
     const categoryIds = categories.map((c) => c.id);
     for (const s of stakeholders) {
       expect(s.name).toBeTypeOf("string");
+      expect(s.shortName).toBeTypeOf("string");
+      expect(s.shortName.length).toBeLessThanOrEqual(4);
       expect(s.role).toBeTypeOf("string");
       expect(s.influence).toBeGreaterThanOrEqual(0);
       expect(s.influence).toBeLessThanOrEqual(100);

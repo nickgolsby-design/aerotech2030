@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { PHASES } from "../state/gameReducer.js";
+import Glossary from "./Glossary.jsx";
 
 function useNow(intervalMs) {
   const [now, setNow] = useState(() => Date.now());
@@ -36,6 +37,7 @@ export default function Header({ state, onRestart }) {
             </span>
           )}
           <Elapsed startedAt={state.startedAt} finishedAt={state.finishedAt} />
+          <Glossary />
 
           {confirming ? (
             <span className="confirm" role="group" aria-label="Confirm restart">

@@ -20,8 +20,8 @@ import {
   getChallenge,
   verdictLabels
 } from "./outcomeEngine.js";
+import { HIGH_INFLUENCE } from "../data/gameConfig.js";
 
-export const HIGH_INFLUENCE = 85;
 const EXPERT_HORIZON = 3;
 
 const average = (values) => values.reduce((a, b) => a + b, 0) / values.length;

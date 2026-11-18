@@ -7,6 +7,7 @@ import {
 } from "../data/recommendation.js";
 import { validateRecommendation, riskSeverity } from "../engine/outcomeEngine.js";
 import FacilitatorNote from "./FacilitatorNote.jsx";
+import PlatformCards from "./PlatformCards.jsx";
 
 export default function RecommendationPanel({
   platforms,
@@ -22,8 +23,6 @@ export default function RecommendationPanel({
 
   return (
     <section className="panel recommendation" id="recommendation">
-      <hr />
-
       <h2>Board Recommendation</h2>
       <p className="muted">
         Prepare your recommendation. Once presented, it can't be changed, and
@@ -42,6 +41,10 @@ export default function RecommendationPanel({
           ))}
         </select>
       </label>
+
+      {recommendation.platform && (
+        <PlatformCards only={recommendation.platform} />
+      )}
 
       {!staying && (
         <fieldset className="field">

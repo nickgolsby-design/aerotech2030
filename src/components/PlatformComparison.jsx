@@ -1,6 +1,10 @@
 import { criteria, platformProfiles } from "../data/platformProfiles.js";
 import { evidenceById } from "../data/evidence.js";
+import { categories } from "../data/evidence.js";
 import { MAX_CRITERION_WEIGHT } from "../data/gameConfig.js";
+import PlatformCards from "./PlatformCards.jsx";
+
+const categoryLabel = Object.fromEntries(categories.map((c) => [c.id, c.label]));
 
 const weightOptions = Array.from(
   { length: MAX_CRITERION_WEIGHT + 1 },
@@ -30,7 +34,12 @@ export default function PlatformComparison({
 
   return (
     <section className="panel" id="comparison">
-      <hr />
+      <h2>The options</h2>
+      <p className="muted">
+        Simplified profiles for this case study. Use your evidence to judge
+        which strengths and concerns matter most to AeroTech.
+      </p>
+      <PlatformCards platforms={platforms} />
 
       <h2>Platform Comparison</h2>
       <p className="muted">
@@ -57,7 +66,14 @@ export default function PlatformComparison({
               const isRevealed = coveredCategories.has(criterion.category);
               return (
                 <tr key={criterion.id} className={isRevealed ? "" : "unknown"}>
-                  <th scope="row">{criterion.label}</th>
+                  <th scope="row">
+                    {criterion.label}
+                    <span className="unlock-note">
+                      {isRevealed
+                        ? `Evidence: ${categoryLabel[criterion.category]}`
+                        : `Needs evidence: ${categoryLabel[criterion.category]}`}
+                    </span>
+                  </th>
                   <td>
                     <select
                       aria-label={`Weight for ${criterion.label}`}

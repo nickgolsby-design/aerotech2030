@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { QUESTION_BUDGET } from "../data/gameConfig.js";
 import { MAX_TEAM_NAME_LENGTH } from "../state/gameReducer.js";
+import { platforms } from "../data/platformProfiles.js";
+import { timeline, budget, board, deliverable } from "../data/briefing.js";
+import Glossary from "./Glossary.jsx";
 
 export default function BriefingScreen({ onStart }) {
   const [teamName, setTeamName] = useState("");
@@ -13,7 +16,10 @@ export default function BriefingScreen({ onStart }) {
 
   return (
     <main className="game briefing">
-      <p className="eyebrow">Confidential · Board memorandum</p>
+      <div className="section-head">
+        <p className="eyebrow">Confidential · Board memorandum</p>
+        <Glossary />
+      </div>
       <h1>AeroTech Precision Ltd</h1>
       <h2>Strategic Board Memorandum</h2>
 
@@ -41,6 +47,43 @@ export default function BriefingScreen({ onStart }) {
         </section>
 
         <section className="card">
+          <h3>Timeline</h3>
+          <ol className="timeline">
+            {timeline.map((t) => (
+              <li key={t.when}>
+                <span className="timeline-when">{t.when}</span>
+                <span>{t.what}</span>
+              </li>
+            ))}
+          </ol>
+
+          <h3>Budget</h3>
+          <p>
+            <strong>{budget.headline}.</strong> {budget.detail}
+          </p>
+        </section>
+
+        <section className="card">
+          <h3>The board</h3>
+          <ul>
+            {board.members.map((m) => (
+              <li key={m.role}>
+                <strong>{m.role}</strong> — {m.note}
+              </li>
+            ))}
+          </ul>
+          <p className="muted">{board.attending}</p>
+
+          <h3>Options on the table</h3>
+          <ul>
+            {platforms.map((p) => (
+              <li key={p}>{p}</li>
+            ))}
+          </ul>
+          <p className="muted">You can read a profile of each option during the investigation.</p>
+        </section>
+
+        <section className="card">
           <h3>Your Consultancy Task</h3>
           <ol>
             <li>Investigate stakeholder needs</li>
@@ -50,6 +93,15 @@ export default function BriefingScreen({ onStart }) {
             <li>Present a recommendation</li>
           </ol>
 
+          <h3>The board expects</h3>
+          <ul>
+            {deliverable.map((d) => (
+              <li key={d}>{d}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="card">
           <h3>How the engagement works</h3>
           <ul>
             <li>
@@ -58,13 +110,14 @@ export default function BriefingScreen({ onStart }) {
             </li>
             <li>
               Stakeholders share more when they trust you. The way you frame
-              a question matters.
+              a question matters, and influential stakeholders matter most to
+              the board.
             </li>
             <li>
               The board will challenge the areas you investigated least, then
               you'll see the consequences in Years 1, 3 and 5.
             </li>
-            <li>Allow 20–30 minutes.</li>
+            <li>Allow 20–30 minutes. Unfamiliar terms are in the Glossary.</li>
           </ul>
         </section>
       </div>

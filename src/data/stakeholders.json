@@ -2,6 +2,7 @@
   {
     "id": "ceo",
     "name": "CEO",
+    "shortName": "CEO",
     "role": "Sets strategic direction; chairs the board.",
     "influence": 95,
     "initialTrust": 55,
@@ -37,6 +38,7 @@
   {
     "id": "finance-director",
     "name": "Finance Director",
+    "shortName": "FD",
     "role": "Owns the investment case and capital approval.",
     "influence": 95,
     "initialTrust": 45,
@@ -72,6 +74,7 @@
   {
     "id": "manufacturing-director",
     "name": "Manufacturing Director",
+    "shortName": "MD",
     "role": "Runs machining and assembly across two sites.",
     "influence": 85,
     "initialTrust": 50,
@@ -107,6 +110,7 @@
   {
     "id": "chief-design-engineer",
     "name": "Chief Design Engineer",
+    "shortName": "CDE",
     "role": "Leads 60 design engineers; owns CAD standards.",
     "influence": 90,
     "initialTrust": 50,
@@ -142,6 +146,7 @@
   {
     "id": "it-manager",
     "name": "IT Manager",
+    "shortName": "IT",
     "role": "Responsible for infrastructure, licensing servers and security.",
     "influence": 75,
     "initialTrust": 60,
@@ -179,6 +184,7 @@
   {
     "id": "quality-manager",
     "name": "Quality Manager",
+    "shortName": "QM",
     "role": "Owns AS9100 certification and customer audits.",
     "influence": 80,
     "initialTrust": 45,
@@ -214,6 +220,7 @@
   {
     "id": "cae-lead",
     "name": "Simulation (CAE) Lead",
+    "shortName": "CAE",
     "role": "Leads stress, thermal and fatigue analysis.",
     "influence": 70,
     "initialTrust": 50,
@@ -249,6 +256,7 @@
   {
     "id": "hr-training-manager",
     "name": "HR & Training Manager",
+    "shortName": "HR",
     "role": "Manages skills, recruitment and staff engagement.",
     "influence": 60,
     "initialTrust": 55,
@@ -284,6 +292,7 @@
   {
     "id": "customer-programmes-director",
     "name": "Customer Programmes Director",
+    "shortName": "CPD",
     "role": "Manages Airbus and Rolls-Royce relationships and bids.",
     "influence": 85,
     "initialTrust": 45,
@@ -319,6 +328,7 @@
   {
     "id": "procurement-manager",
     "name": "Procurement Manager",
+    "shortName": "PM",
     "role": "Negotiates software and services contracts.",
     "influence": 55,
     "initialTrust": 60,

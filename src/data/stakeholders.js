@@ -3,6 +3,7 @@
 //
 // Stakeholder fields:
 //   id, name, role       identity and description shown to students
+//   shortName            label used on the influence–trust grid
 //   influence (0–100)    weight in board buy-in; 85+ counts as high influence
 //   initialTrust (0–100) starting trust in the consultants
 //   category             evidence category this stakeholder mainly speaks for

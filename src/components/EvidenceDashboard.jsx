@@ -1,7 +1,10 @@
 import { categories, evidence, evidenceById } from "../data/evidence.js";
+import { criteria } from "../data/platformProfiles.js";
 import { evidenceSource } from "../data/stakeholders.js";
 import { EVIDENCE_TAGS } from "../data/gameConfig.js";
 import FacilitatorNote from "./FacilitatorNote.jsx";
+
+const criterionLabel = Object.fromEntries(criteria.map((c) => [c.category, c.label]));
 
 export default function EvidenceDashboard({ evidenceIds, tags, onTag }) {
   const found = evidenceIds.map((id) => evidenceById[id]);
@@ -16,8 +19,6 @@ export default function EvidenceDashboard({ evidenceIds, tags, onTag }) {
 
   return (
     <section className="panel" id="evidence">
-      <hr />
-
       <h2>Investigation Coverage</h2>
       <p className="muted">
         {found.length} of {evidence.length} evidence items discovered.
@@ -71,7 +72,10 @@ export default function EvidenceDashboard({ evidenceIds, tags, onTag }) {
         .filter((c) => c.items.length > 0)
         .map((c) => (
           <div key={c.id} className="evidence-group">
-            <h3>{c.label}</h3>
+            <h3>
+              {c.label}
+              <span className="criterion-link">Informs: {criterionLabel[c.id]}</span>
+            </h3>
             <ul>
               {c.items.map((item) => (
                 <li key={item.id} className="evidence-item">
