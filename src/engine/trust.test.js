@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { trustHistory, quadrantFor, TRUST_BANDS } from "./trust.js";
-import { influenceTier, trustLabel } from "../data/gameConfig.js";
+import { trustLabel } from "../data/gameConfig.js";
 import { gameReducer, initialGameState } from "../state/gameReducer.js";
 import { stakeholdersById } from "../data/stakeholders.js";
 import { platforms } from "../data/platformProfiles.js";
@@ -13,22 +13,22 @@ describe("trust history", () => {
   it("matches the trust the reducer records, question by question", () => {
     const s = [
       { type: "START", teamName: "T", now: 0 },
-      ask("quality-manager", "qm-leading"),
-      ask("ceo", "ceo-success"),
-      ask("quality-manager", "qm-certification"),
-      ask("quality-manager", "qm-traceability")
+      ask("senior-cad-engineer", "sce-difficult"),
+      ask("ceo", "ceo-problem"),
+      ask("senior-cad-engineer", "sce-colleagues"),
+      ask("senior-cad-engineer", "sce-like")
     ].reduce(gameReducer, initialGameState);
 
-    const qm = stakeholdersById["quality-manager"];
-    const history = trustHistory(qm, s.interviews);
+    const sce = stakeholdersById["senior-cad-engineer"];
+    const history = trustHistory(sce, s.interviews);
     expect(history.map((h) => h.questionId)).toEqual([
-      "qm-leading",
-      "qm-certification",
-      "qm-traceability"
+      "sce-difficult",
+      "sce-colleagues",
+      "sce-like"
     ]);
-    expect(history[0]).toMatchObject({ before: 45, after: 25, change: -20 });
-    expect(history[1]).toMatchObject({ before: 25, after: 30, change: 5 });
-    expect(history.at(-1).after).toBe(s.trust["quality-manager"]);
+    expect(history[0]).toMatchObject({ before: 45, after: 45, change: 0 });
+    expect(history[1]).toMatchObject({ before: 45, after: 40, change: -5 });
+    expect(history.at(-1).after).toBe(s.trust["senior-cad-engineer"]);
   });
 
   it("clamps at 0, like the reducer", () => {
@@ -48,11 +48,8 @@ describe("trust and influence bands", () => {
     expect(quadrantFor(20, 70)).toBe("monitor");
   });
 
-  it("influence tiers and trust labels line up with the legend", () => {
-    expect(influenceTier(95)).toBe("High");
-    expect(influenceTier(85)).toBe("High");
-    expect(influenceTier(75)).toBe("Medium");
-    expect(influenceTier(55)).toBe("Low");
+  it("relationship labels line up with the legend", () => {
+    expect(TRUST_BANDS.map((b) => b.label)).toEqual(["Open", "Neutral", "Cautious"]);
     expect(TRUST_BANDS.map((b) => b.label)).toEqual([
       trustLabel(100),
       trustLabel(45),

@@ -46,20 +46,5 @@ export const platformInfo = {
       "Significant retraining for experienced CATIA users",
       "Data exchange with customers on Dassault platforms needs planning"
     ]
-  },
-  "PTC Creo": {
-    vendor: "PTC",
-    summary:
-      "Parametric CAD platform, usually paired with PTC's own data-management tools.",
-    strengths: [
-      "Competitive licensing",
-      "Capable parametric modelling",
-      "Well-supported, current releases"
-    ],
-    concerns: [
-      "Weaker fit with AeroTech's current CAM workflows",
-      "Limited alignment with AeroTech's key customers",
-      "Full data migration and retraining required"
-    ]
   }
 };

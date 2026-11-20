@@ -68,8 +68,13 @@ export default function App() {
         {state.phase === "boardReview" && (
           <BoardReview
             state={state}
-            onAnswer={(challengeId, optionId) =>
-              dispatch({ type: "ANSWER_CHALLENGE", challengeId, optionId })
+            onAnswer={(challengeId, positionId, evidenceIds) =>
+              dispatch({
+                type: "ANSWER_CHALLENGE",
+                challengeId,
+                positionId,
+                evidenceIds
+              })
             }
             onShowOutcomes={() =>
               dispatch({ type: "SHOW_OUTCOMES", now: Date.now() })

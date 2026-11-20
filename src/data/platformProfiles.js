@@ -9,8 +9,7 @@
 //
 // profiles      { [platform]: { [criterionId]: score 0–10, higher is better } }
 //   cost / manufacturing / future are the original values; the other
-//   criteria (and all PTC Creo values) are provisional and should be
-//   reviewed with the module tutor.
+//   criteria are provisional and should be reviewed with the module tutor.
 import platformData from "./platformProfiles.json" with { type: "json" };
 
 export const platforms = platformData.platforms;

@@ -1,12 +1,17 @@
-import { categories, evidence, evidenceById } from "../data/evidence.js";
+import {
+  categories,
+  evidence,
+  evidenceById,
+  EVIDENCE_TAGS,
+  classificationsById
+} from "../data/evidence.js";
 import { criteria } from "../data/platformProfiles.js";
-import { evidenceSource } from "../data/stakeholders.js";
-import { EVIDENCE_TAGS } from "../data/gameConfig.js";
 import FacilitatorNote from "./FacilitatorNote.jsx";
 
 const criterionLabel = Object.fromEntries(criteria.map((c) => [c.category, c.label]));
+const supportLabel = Object.fromEntries(criteria.map((c) => [c.id, c.label]));
 
-export default function EvidenceDashboard({ evidenceIds, tags, onTag }) {
+export default function EvidenceDashboard({ evidenceIds, foundBy, tags, onTag }) {
   const found = evidenceIds.map((id) => evidenceById[id]);
 
   const coverage = categories.map((category) => {
@@ -64,7 +69,7 @@ export default function EvidenceDashboard({ evidenceIds, tags, onTag }) {
       <h2>Evidence Log</h2>
       {found.length === 0 && (
         <p className="muted">
-          No evidence yet. Interview stakeholders to build your case.
+          No evidence yet. Interview stakeholders or review documents to build your case.
         </p>
       )}
 
@@ -81,8 +86,14 @@ export default function EvidenceDashboard({ evidenceIds, tags, onTag }) {
                 <li key={item.id} className="evidence-item">
                   <div>
                     {item.text}
-                    <span className="muted"> — {evidenceSource[item.id]}</span>
-                    {item.critical && <FacilitatorNote>critical</FacilitatorNote>}
+                    <span className="muted"> — {foundBy[item.id]}</span>
+                    <span className="supports">
+                      Supports: {item.supports.map((id) => supportLabel[id]).join(", ")}
+                    </span>
+                    <FacilitatorNote>
+                      {classificationsById[item.classification].label}
+                      {item.critical ? " · critical" : ""}
+                    </FacilitatorNote>
                   </div>
                   <select
                     aria-label="Classify evidence"

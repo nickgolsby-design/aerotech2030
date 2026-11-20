@@ -1,9 +1,28 @@
 import { describe, it, expect } from "vitest";
-import { stakeholders, stakeholdersById, evidenceSource } from "./stakeholders.js";
+import { stakeholders, stakeholdersById } from "./stakeholders.js";
 import { evidence, categories } from "./evidence.js";
+import { evidenceSources } from "./sources.js";
+import { INFLUENCE_WEIGHT } from "./gameConfig.js";
+
+const DEPTHS = ["surface", "probing", "deep"];
 
 // Guards the JSON dataset so editing it can't silently break the game.
 describe("stakeholders.json", () => {
+  it("uses the redesign roster", () => {
+    expect(stakeholders.map((s) => s.name)).toEqual([
+      "CEO",
+      "Finance Director",
+      "Chief Design Engineer",
+      "Manufacturing Director",
+      "Quality Manager",
+      "HR Manager",
+      "IT Manager",
+      "Airbus Representative",
+      "Senior CAD Engineer",
+      "Graduate Engineer"
+    ]);
+  });
+
   it("has unique stakeholder and question ids", () => {
     const ids = stakeholders.map((s) => s.id);
     const questionIds = stakeholders.flatMap((s) => s.questions.map((q) => q.id));
@@ -12,33 +31,67 @@ describe("stakeholders.json", () => {
     expect(Object.keys(stakeholdersById)).toHaveLength(ids.length);
   });
 
-  it("every stakeholder is complete and in range", () => {
+  it("every stakeholder has the full intelligence profile", () => {
     const categoryIds = categories.map((c) => c.id);
     for (const s of stakeholders) {
-      expect(s.name).toBeTypeOf("string");
-      expect(s.shortName).toBeTypeOf("string");
+      for (const field of ["name", "role", "publicPosition", "underlyingConcern", "blindSpot", "challengeQuestion"]) {
+        expect(s[field], `${s.id}.${field}`).toBeTypeOf("string");
+        expect(s[field].length).toBeGreaterThan(0);
+      }
       expect(s.shortName.length).toBeLessThanOrEqual(4);
-      expect(s.role).toBeTypeOf("string");
-      expect(s.influence).toBeGreaterThanOrEqual(0);
-      expect(s.influence).toBeLessThanOrEqual(100);
+      expect(Object.keys(INFLUENCE_WEIGHT)).toContain(s.influenceLevel);
+      expect(s.influence).toBe(INFLUENCE_WEIGHT[s.influenceLevel]);
       expect(s.initialTrust).toBeGreaterThanOrEqual(0);
       expect(s.initialTrust).toBeLessThanOrEqual(100);
       expect(categoryIds).toContain(s.category);
-      expect(s.questions.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("questions are well formed, and follow-ups follow a question from the same stakeholder", () => {
+    for (const s of stakeholders) {
+      const own = new Set(s.questions.map((q) => q.id));
       for (const q of s.questions) {
         expect(q.text).toBeTypeOf("string");
         expect(q.response).toBeTypeOf("string");
-        expect(q.trustDelta).toBeTypeOf("number");
-        expect(Array.isArray(q.evidence)).toBe(true);
+        expect(DEPTHS).toContain(q.depth);
+        expect(Math.abs(q.trustDelta)).toBeLessThanOrEqual(5);
+        if (q.depth === "deep") {
+          expect(own.has(q.requires), `${q.id} requires ${q.requires}`).toBe(true);
+          const parent = s.questions.find((p) => p.id === q.requires);
+          expect(parent.requires).toBeUndefined();
+        } else {
+          expect(q.requires).toBeUndefined();
+        }
+        if (q.depth === "surface") expect(q.evidence).toEqual([]);
+        else expect(q.evidence.length).toBeGreaterThan(0);
       }
     }
   });
 
-  it("references only real evidence, and every evidence item is reachable once", () => {
+  it("every stakeholder has a generic question and a follow-up", () => {
+    for (const s of stakeholders) {
+      expect(s.questions.some((q) => q.depth === "surface"), s.id).toBe(true);
+      expect(s.questions.some((q) => q.depth === "deep"), s.id).toBe(true);
+    }
+  });
+
+  it("references only real evidence, and every evidence item can be found", () => {
     const evidenceIds = evidence.map((e) => e.id);
-    const referenced = stakeholders.flatMap((s) => s.questions.flatMap((q) => q.evidence));
-    for (const id of referenced) expect(evidenceIds).toContain(id);
-    expect(new Set(referenced).size).toBe(referenced.length);
-    for (const id of evidenceIds) expect(evidenceSource[id]).toBeDefined();
+    for (const s of stakeholders) {
+      for (const q of s.questions) {
+        for (const id of q.evidence) expect(evidenceIds).toContain(id);
+      }
+    }
+    for (const id of evidenceIds) expect(evidenceSources[id], id).toBeDefined();
+  });
+
+  it("no single stakeholder owns most of the critical evidence", () => {
+    const critical = evidence.filter((e) => e.critical);
+    for (const s of stakeholders) {
+      const owned = critical.filter((e) =>
+        evidenceSources[e.id].some((r) => r.stakeholderId === s.id)
+      );
+      expect(owned.length, s.id).toBeLessThanOrEqual(critical.length / 4);
+    }
   });
 });

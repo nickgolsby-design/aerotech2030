@@ -20,7 +20,7 @@ export const board = {
     { role: "CEO", note: "Chairs the board" },
     { role: "Finance Director", note: "Owns the investment case" },
     { role: "Manufacturing Director", note: "Runs production at both sites" },
-    { role: "Customer Programmes Director", note: "Manages Airbus and Rolls-Royce" }
+    { role: "Chief Design Engineer", note: "Leads design engineering and simulation" }
   ],
   attending:
     "Senior managers from engineering, IT, quality, simulation, HR and procurement will attend the review and may question your recommendation."

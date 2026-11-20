@@ -1,3 +1,4 @@
+import { stakeholdersById } from "../data/stakeholders.js";
 import { verdictLabels } from "../engine/outcomeEngine.js";
 import {
   assessLearningOutcomes,
@@ -12,6 +13,29 @@ const ratingClass = {
   Strong: "good",
   Developing: "fair",
   "Needs work": "poor"
+};
+
+/** e.g. "partly convincing; it needed input from the Finance Director." */
+function alternativeNote(alt) {
+  if (alt.kind === "weak") return `a weak position. ${alt.position.weakness}`;
+  const gaps = alt.groups
+    .filter((g) => g.status === "missing")
+    .map((g) => `${g.label} was limited`);
+  if (alt.notConsulted.length > 0) {
+    gaps.push(
+      `it needed input from the ${alt.notConsulted
+        .map((id) => stakeholdersById[id].name)
+        .join(" and ")}`
+    );
+  }
+  return [alt.rating.toLowerCase(), ...gaps].join("; ") + ".";
+}
+
+const RATING_CLASS = {
+  Convincing: "band-good",
+  "Reasonable, but under-supported": "band-fair",
+  Unconvincing: "band-poor",
+  "Weak judgement": "band-poor"
 };
 
 export default function Debrief({ state, outcome, onBack }) {
@@ -102,18 +126,28 @@ export default function Debrief({ state, outcome, onBack }) {
             <p className="question">
               {a.stakeholder}: “{a.text}”
             </p>
+            <p className="muted">Trade-off: {a.tradeOff}</p>
             <p>
-              <span className={a.wasBest ? "band-good" : "band-poor"}>
-                {a.wasBest ? "✓ Strongest answer" : "✗ Your answer"}:
-              </span>{" "}
-              {a.chosen.text}
+              <span className={RATING_CLASS[a.defended.rating]}>
+                You argued “{a.defended.position.stance}”: {a.defended.rating.toLowerCase()}
+              </span>
             </p>
-            {!a.wasBest && (
-              <p>
-                <span className="band-good">Stronger answer:</span>{" "}
-                {a.best.text}
-              </p>
-            )}
+            <p>The other positions, judged on your investigation:</p>
+            <ul>
+              {a.alternatives.map((alt) => (
+                <li key={alt.position.id}>
+                  <strong>{alt.position.stance}</strong>: {alternativeNote(alt)}
+                </li>
+              ))}
+            </ul>
+            {a.bestAvailable.kind === "defensible" &&
+              a.bestAvailable.position.id !== a.defended.position.id &&
+              a.bestAvailable.strength > a.defended.strength && (
+                <p className="muted">
+                  With the evidence you had, “{a.bestAvailable.position.stance}”
+                  was your best-supported position.
+                </p>
+              )}
           </li>
         ))}
       </ol>
@@ -128,7 +162,14 @@ export default function Debrief({ state, outcome, onBack }) {
               {m.text}
               <span className="muted">
                 {" "}
-                Ask the {m.stakeholder.name}: “{m.question.text}”
+                Found via:{" "}
+                {m.routes
+                  .map((r) =>
+                    r.kind === "document"
+                      ? `reviewing “${r.label}”`
+                      : `asking the ${r.label} “${r.detail}”`
+                  )
+                  .join(", or ")}
               </span>
             </li>
           ))}

@@ -10,7 +10,7 @@ import { QUADRANTS, quadrantFor } from "../engine/trust.js";
 const W = 640;
 const H = 400;
 const PAD = { left: 64, right: 20, top: 24, bottom: 52 };
-const MIN_INFLUENCE = 50;
+const MIN_INFLUENCE = 40;
 const RADIUS = 15;
 
 const x = (trust) => PAD.left + (trust / 100) * (W - PAD.left - PAD.right);
@@ -70,7 +70,7 @@ export default function StakeholderMap({ stakeholders, trust, selectedId, onSele
           aria-label="Influence–trust map of stakeholders"
         >
           {/* Trust bands */}
-          <rect className="map-band band-guarded" x={x(0)} y={PAD.top}
+          <rect className="map-band band-cautious" x={x(0)} y={PAD.top}
             width={x(GUARDED_THRESHOLD) - x(0)} height={H - PAD.top - PAD.bottom} />
           <rect className="map-band band-cautious" x={x(GUARDED_THRESHOLD)} y={PAD.top}
             width={x(OPEN_THRESHOLD) - x(GUARDED_THRESHOLD)} height={H - PAD.top - PAD.bottom} />
@@ -91,8 +91,8 @@ export default function StakeholderMap({ stakeholders, trust, selectedId, onSele
           {[0, GUARDED_THRESHOLD, OPEN_THRESHOLD, 100].map((t) => (
             <text key={t} className="map-tick" x={x(t)} y={H - PAD.bottom + 18} textAnchor="middle">{t}</text>
           ))}
-          {[50, 70, HIGH_INFLUENCE, 100].map((i) => (
-            <text key={i} className="map-tick" x={PAD.left - 10} y={y(i) + 4} textAnchor="end">{i}</text>
+          {[["Low", 50], ["Medium", 70], ["High", 90]].map(([label, i]) => (
+            <text key={label} className="map-tick" x={PAD.left - 10} y={y(i) + 4} textAnchor="end">{label}</text>
           ))}
           <text className="map-axis" x={(x(0) + x(100)) / 2} y={H - 10} textAnchor="middle">
             Trust in your team →
@@ -112,14 +112,14 @@ export default function StakeholderMap({ stakeholders, trust, selectedId, onSele
                 className={`map-point point-${label.toLowerCase()}${selectedId === s.id ? " selected" : ""}`}
                 role="button"
                 tabIndex={0}
-                aria-label={`${s.name}: influence ${s.influence}, trust ${value} (${label}). Open interview.`}
+                aria-label={`${s.name}: ${s.influenceLevel} influence, ${label}. Open interview.`}
                 onClick={(e) => activate(e, s.id)}
                 onKeyDown={(e) => activate(e, s.id)}
               >
                 {moved && <line className="map-tail" x1={startX} x2={cx} y1={cy} y2={cy} />}
                 <circle cx={cx} cy={cy} r={RADIUS} />
                 <text x={cx} y={cy + 4} textAnchor="middle">{s.shortName}</text>
-                <title>{`${s.name} · influence ${s.influence} · trust ${value} (${label})`}</title>
+                <title>{`${s.name} · ${s.influenceLevel} influence · ${label}`}</title>
               </g>
             );
           })}

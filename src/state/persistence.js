@@ -2,7 +2,7 @@
 // Bump SAVE_VERSION whenever the state shape or content ids change, so
 // old saves are discarded rather than loaded into an incompatible game.
 export const SAVE_KEY = "aerotech2030:save";
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 4;
 
 function defaultStorage() {
   try {

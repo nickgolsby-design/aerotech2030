@@ -1,8 +1,7 @@
 // Pure scoring functions. No React, no side effects, so they're unit-testable.
 import { criteria, platformProfiles } from "../data/platformProfiles.js";
-import { evidence, categories } from "../data/evidence.js";
+import { evidence } from "../data/evidence.js";
 import { stakeholders, stakeholdersById } from "../data/stakeholders.js";
-import { GUARDED_THRESHOLD } from "../data/gameConfig.js";
 import {
   STAY_PLATFORM,
   strategyEffects,
@@ -13,9 +12,11 @@ import {
   MIN_RATIONALE_LENGTH
 } from "../data/recommendation.js";
 import {
-  categoryChallenges,
-  platformChallenges,
-  CATEGORY_CHALLENGE_COUNT
+  dimensions,
+  dimensionChallenges,
+  judgementChallenges,
+  DIMENSION_CHALLENGE_COUNT,
+  MAX_CITED_EVIDENCE
 } from "../data/boardChallenges.js";
 
 export const YEARS = [1, 3, 5];
@@ -60,15 +61,6 @@ export function diligenceScore(evidenceIds) {
   return found.length / critical.length;
 }
 
-/** Share of critical evidence discovered in one category (0–1). */
-export function categoryCoverage(evidenceIds, categoryId) {
-  const critical = evidence.filter(
-    (e) => e.critical && e.category === categoryId
-  );
-  if (critical.length === 0) return 1;
-  const found = critical.filter((e) => evidenceIds.includes(e.id));
-  return found.length / critical.length;
-}
 
 const criterionByCategory = Object.fromEntries(
   criteria.map((c) => [c.category, c.id])
@@ -180,59 +172,219 @@ export function changeScore(rec) {
 // Board review
 // ---------------------------------------------------------------------------
 
-/**
- * Pick the board's challenges: the least-investigated categories, plus one
- * challenge specific to the recommended platform. Returns challenge ids.
- */
-export function selectChallenges(platform, evidenceIds) {
-  const platformChallenge = platformChallenges[platform];
-  const ranked = categories
-    .map((c) => c.id)
-    .filter((id) => id !== platformChallenge.category)
-    .map((id) => ({
-      id,
-      coverage: categoryCoverage(evidenceIds, id),
-      influence:
-        stakeholdersById[categoryChallenges[id].stakeholderId].influence
-    }))
-    .sort((a, b) => a.coverage - b.coverage || b.influence - a.influence)
-    .slice(0, CATEGORY_CHALLENGE_COUNT)
-    .map((c) => `category:${c.id}`);
-
-  return [...ranked, `platform:${platform}`];
+/** Evidence that could back any defensible position on a challenge. */
+function challengeEvidence(challenge) {
+  return [
+    ...new Set(
+      challenge.positions.flatMap((p) => (p.support ?? []).flatMap((g) => g.evidence))
+    )
+  ];
 }
 
-/** Resolve a challenge id into its content plus the category it tests. */
+/**
+ * Pick the board's challenges, as an executive challenge session would:
+ *   - the two board dimensions where the team's evidence is thinnest
+ *   - one judgement challenge, aimed at the weakest part of the reasoning
+ * Returns challenge ids ("dimension:<key>", "judgement:<key>").
+ */
+export function selectChallenges(state) {
+  const { evidenceIds } = state;
+  const found = new Set(evidenceIds);
+
+  const thinnest = Object.keys(dimensions)
+    .map((key, order) => {
+      const pool = challengeEvidence(dimensionChallenges[key]);
+      return {
+        key,
+        order,
+        coverage: pool.filter((id) => found.has(id)).length / pool.length
+      };
+    })
+    .sort((a, b) => a.coverage - b.coverage || a.order - b.order)
+    .slice(0, DIMENSION_CHALLENGE_COUNT)
+    .map((d) => `dimension:${d.key}`);
+
+  return [...thinnest, `judgement:${judgementFor(state)}`];
+}
+
+/** Which judgement question the Chair asks last. */
+function judgementFor(state) {
+  const rec = state.recommendation;
+  if (rec.platform === STAY_PLATFORM) return "defer";
+
+  const assumptionsFound = state.evidenceIds.filter(
+    (id) => evidence.find((e) => e.id === id).classification === "assumption"
+  ).length;
+  if (assumptionsFound < 2) return "assumptions";
+
+  const unheard = stakeholders.filter(
+    (s) => s.influenceLevel === "High" && !wasConsulted(state, s.id)
+  );
+  if (unheard.length > 0) return "dissent";
+
+  if (diligenceScore(state.evidenceIds) < 0.5) return "change-your-mind";
+  if (mitigationScore(rec, rec.platform, rec.strategy || null) < 0.67) {
+    return "unresolved-risks";
+  }
+  return "act-now";
+}
+
+/** Resolve a challenge id into its content. */
 export function getChallenge(challengeId) {
   const [kind, key] = challengeId.split(/:(.*)/s);
-  if (kind === "platform") {
-    return { id: challengeId, ...platformChallenges[key] };
+  if (kind === "judgement") {
+    return { id: challengeId, kind, key, label: "Judgement", ...judgementChallenges[key] };
   }
-  return { id: challengeId, category: key, ...categoryChallenges[key] };
+  return { id: challengeId, kind, key, label: dimensions[key], ...dimensionChallenges[key] };
 }
 
 /**
- * Change in board confidence from one answer. Answers are more convincing
- * when the team has evidence in that area, and less so when the challenging
- * stakeholder distrusts them.
+ * Whether the team properly consulted a stakeholder: asked them at least one
+ * probing or follow-up question that was answered. Generic questions only
+ * draw out a public position, so they don't count.
  */
-export function challengeImpact(challengeId, optionId, evidenceIds, trust) {
+export function wasConsulted(state, stakeholderId) {
+  return (state.interviews ?? []).some((entry) => {
+    if (entry.stakeholderId !== stakeholderId || entry.guarded) return false;
+    const question = stakeholdersById[stakeholderId].questions.find(
+      (q) => q.id === entry.questionId
+    );
+    return question.depth !== "surface";
+  });
+}
+
+export function argumentRating(strength, kind = "defensible") {
+  if (kind === "weak") return "Weak judgement";
+  if (strength >= 0.75) return "Convincing";
+  if (strength >= 0.45) return "Reasonable, but under-supported";
+  return "Unconvincing";
+}
+
+// A weak position is poor judgement however much evidence is cited.
+const WEAK_STRENGTH = 0.1;
+
+/**
+ * How well the team defends a position (0–1). Strength comes from the team's
+ * own investigation, not from the position itself:
+ *   evidence    each kind of evidence the argument needs (half the score):
+ *               cited = 1, gathered but not cited = 0.5, not gathered = 0
+ *   consulted   share of the stakeholders it relies on who were consulted
+ *   assumption  whether the assumption it depends on has been tested
+ * An argument that conflicts with the team's own recommendation loses force.
+ * Weak positions score low whatever the evidence.
+ */
+export function assessArgument(challengeId, answer, state) {
   const challenge = getChallenge(challengeId);
-  const option = challenge.options.find((o) => o.id === optionId);
-  const backed = categoryCoverage(evidenceIds, challenge.category) > 0;
-  const table = backed
-    ? { 1: 12, 0.5: 4, 0: -10 }
-    : { 1: 2, 0.5: -4, 0: -15 };
-  let delta = table[option.quality];
-  if (delta > 0 && trust[challenge.stakeholderId] < GUARDED_THRESHOLD) {
-    delta /= 2;
+  const position = challenge.positions.find((p) => p.id === answer.positionId);
+  const cited = answer.evidenceIds ?? [];
+  const found = new Set(state.evidenceIds);
+
+  if (position.kind === "weak") {
+    return {
+      challenge,
+      position,
+      kind: "weak",
+      strength: WEAK_STRENGTH,
+      rating: argumentRating(WEAK_STRENGTH, "weak"),
+      delta: Math.round(-8 + 20 * WEAK_STRENGTH),
+      groups: [],
+      relevant: [],
+      irrelevant: cited,
+      consulted: [],
+      notConsulted: [],
+      assumption: null,
+      assumptionTested: null,
+      conflict: false
+    };
   }
-  return delta;
+
+  const backing = new Set(position.support.flatMap((g) => g.evidence));
+  const groups = position.support.map((g) => {
+    const citedHere = cited.filter((id) => g.evidence.includes(id));
+    const gathered = g.evidence.filter((id) => found.has(id));
+    const status =
+      citedHere.length > 0 ? "cited" : gathered.length > 0 ? "uncited" : "missing";
+    return { label: g.label, status, cited: citedHere, gathered };
+  });
+  const relevant = cited.filter((id) => backing.has(id));
+  const irrelevant = cited.filter((id) => !backing.has(id));
+  const consulted = position.consult.filter((id) => wasConsulted(state, id));
+  const notConsulted = position.consult.filter((id) => !consulted.includes(id));
+  const assumptionTested = position.assumption ? found.has(position.assumption) : null;
+  const conflict = Boolean(
+    position.conflictsWith?.includes(state.recommendation.platform)
+  );
+
+  const groupScore = { cited: 1, uncited: 0.5, missing: 0 };
+  const evidenceScore =
+    groups.reduce((sum, g) => sum + groupScore[g.status], 0) / groups.length;
+  const consultScore = consulted.length / position.consult.length;
+  let strength =
+    assumptionTested === null
+      ? 0.6 * evidenceScore + 0.4 * consultScore
+      : 0.5 * evidenceScore + 0.25 * consultScore + 0.25 * (assumptionTested ? 1 : 0);
+  if (conflict) strength *= 0.6;
+  strength = Math.round(strength * 100) / 100;
+
+  return {
+    challenge,
+    position,
+    kind: "defensible",
+    strength,
+    rating: argumentRating(strength),
+    delta: Math.round(-8 + 20 * strength),
+    groups,
+    relevant,
+    irrelevant,
+    consulted,
+    notConsulted,
+    assumption: position.assumption ?? null,
+    assumptionTested,
+    conflict
+  };
+}
+
+/** Change in board confidence from one defended position (−8 to +12). */
+export function challengeImpact(challengeId, answer, state) {
+  return assessArgument(challengeId, answer, state).delta;
+}
+
+/** The best citations the team could make for a position: one per kind of evidence first. */
+function bestCitations(position, state) {
+  if (position.kind === "weak") return [];
+  const found = new Set(state.evidenceIds);
+  const firstPerGroup = position.support
+    .map((g) => g.evidence.find((id) => found.has(id)))
+    .filter(Boolean);
+  const rest = position.support
+    .flatMap((g) => g.evidence)
+    .filter((id) => found.has(id) && !firstPerGroup.includes(id));
+  return [...new Set([...firstPerGroup, ...rest])].slice(0, MAX_CITED_EVIDENCE);
+}
+
+/**
+ * How strongly the team could have defended each position, citing the best
+ * evidence it actually had. Strongest first. Used in the debrief to show which
+ * positions the team's investigation could support.
+ */
+export function defensiblePositions(challengeId, state) {
+  const challenge = getChallenge(challengeId);
+  return challenge.positions
+    .map((position) =>
+      assessArgument(
+        challengeId,
+        { positionId: position.id, evidenceIds: bestCitations(position, state) },
+        state
+      )
+    )
+    // A weak position is never the best available, however thin the alternatives.
+    .sort((a, b) => (a.kind === "weak") - (b.kind === "weak") || b.strength - a.strength);
 }
 
 /**
  * Board confidence (0–100) after the review: starts from stakeholder support
- * and how thoroughly the team investigated, then moves with each answer.
+ * and how thoroughly the team investigated, then moves with how well each
+ * challenged position was defended.
  */
 export function boardConfidence(state) {
   const { recommendation, challengeAnswers, evidenceIds, trust } = state;
@@ -241,8 +393,8 @@ export function boardConfidence(state) {
     20 * buyInScore(recommendation.platform, trust) +
     20 * diligenceScore(evidenceIds);
   const answers = Object.entries(challengeAnswers).reduce(
-    (sum, [challengeId, optionId]) =>
-      sum + challengeImpact(challengeId, optionId, evidenceIds, trust),
+    (sum, [challengeId, answer]) =>
+      sum + challengeImpact(challengeId, answer, state),
     0
   );
   return clamp(base + answers);

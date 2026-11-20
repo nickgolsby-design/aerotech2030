@@ -53,6 +53,7 @@ export function quadrantFor(trust, influence) {
   return open ? "supporter" : "monitor";
 }
 
+// Relationship labels shown to students. Ranges are for facilitators only.
 export const TRUST_BANDS = [
   {
     label: "Open",
@@ -60,13 +61,13 @@ export const TRUST_BANDS = [
     meaning: "Shares information freely and is more likely to back your recommendation."
   },
   {
-    label: "Cautious",
+    label: "Neutral",
     range: `${GUARDED_THRESHOLD}–${OPEN_THRESHOLD - 1}`,
-    meaning: "Still answers, but poorly framed questions will push them towards guarded."
+    meaning: "Answers your questions, but poorly framed questions can make them cautious."
   },
   {
-    label: "Guarded",
+    label: "Cautious",
     range: `0–${GUARDED_THRESHOLD - 1}`,
-    meaning: "Withholds evidence: questions still use your budget but reveal nothing."
+    meaning: "Withholds evidence: questions still use an action but reveal nothing."
   }
 ];

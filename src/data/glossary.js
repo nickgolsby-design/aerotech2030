@@ -35,10 +35,6 @@ export const glossary = [
     definition: "Siemens' integrated CAD/CAM/CAE software, widely used in manufacturing."
   },
   {
-    term: "PTC Creo",
-    definition: "PTC's parametric CAD software."
-  },
-  {
     term: "Sustaining support",
     definition:
       "A late stage of a software product's life: the vendor still supports it but stops adding features, and long-term compatibility is no longer guaranteed."

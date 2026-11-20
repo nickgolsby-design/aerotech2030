@@ -1,20 +1,19 @@
 import { categories, evidence, evidenceById } from "../data/evidence.js";
 import { criteria } from "../data/platformProfiles.js";
-import { QUESTION_BUDGET } from "../data/gameConfig.js";
+import { ACTION_BUDGET } from "../data/gameConfig.js";
 import { validateRecommendation } from "../engine/outcomeEngine.js";
-import { stakeholdersById } from "../data/stakeholders.js";
 
 const LATEST_COUNT = 4;
 const categoryLabel = Object.fromEntries(categories.map((c) => [c.id, c.label]));
-const criterionLabel = Object.fromEntries(criteria.map((c) => [c.category, c.label]));
+const criterionLabel = Object.fromEntries(criteria.map((c) => [c.id, c.label]));
 
 /** Always-visible summary beside the investigation tabs. */
 export default function InvestigationSidebar({ state, onNavigate }) {
-  const { questionsLeft, evidenceIds, interviews, recommendation } = state;
-  const used = QUESTION_BUDGET - questionsLeft;
+  const { actionsLeft, evidenceIds, lastFound, recommendation } = state;
+  const used = ACTION_BUDGET - actionsLeft;
 
-  // Evidence revealed by the most recent question is highlighted as new.
-  const newIds = new Set(revealedByLastQuestion(interviews));
+  // Evidence revealed by the most recent action is highlighted as new.
+  const newIds = new Set(lastFound);
   const latest = [...evidenceIds].reverse().slice(0, LATEST_COUNT).map((id) => evidenceById[id]);
 
   const coverage = categories.map((c) => ({
@@ -28,14 +27,14 @@ export default function InvestigationSidebar({ state, onNavigate }) {
   return (
     <aside className="sidebar" aria-label="Investigation summary">
       <section className="sidebar-block">
-        <h3>Question budget</h3>
-        <div className="budget-dots" role="img" aria-label={`${used} of ${QUESTION_BUDGET} questions used`}>
-          {Array.from({ length: QUESTION_BUDGET }, (_, i) => (
+        <h3>Investigation actions</h3>
+        <div className="budget-dots" role="img" aria-label={`${used} of ${ACTION_BUDGET} actions used`}>
+          {Array.from({ length: ACTION_BUDGET }, (_, i) => (
             <span key={i} className={i < used ? "dot used" : "dot"} />
           ))}
         </div>
         <p className="sidebar-stat">
-          <strong>{questionsLeft}</strong> of {QUESTION_BUDGET} left
+          <strong>{actionsLeft}</strong> of {ACTION_BUDGET} left
         </p>
       </section>
 
@@ -70,7 +69,10 @@ export default function InvestigationSidebar({ state, onNavigate }) {
                 {newIds.has(item.id) && <span className="new-badge">New</span>}
                 <span className="latest-category">{categoryLabel[item.category]}</span>
                 {item.text}
-                <span className="muted"> Informs: {criterionLabel[item.category]}</span>
+                <span className="muted">
+                  {" "}
+                  Supports: {item.supports.map((id) => criterionLabel[id]).join(", ")}
+                </span>
               </li>
             ))}
           </ul>
@@ -91,14 +93,4 @@ export default function InvestigationSidebar({ state, onNavigate }) {
       </section>
     </aside>
   );
-}
-
-/** Evidence ids revealed by the most recent question (none if guarded). */
-function revealedByLastQuestion(interviews) {
-  const last = interviews.at(-1);
-  if (!last || last.guarded) return [];
-  const question = stakeholdersById[last.stakeholderId].questions.find(
-    (q) => q.id === last.questionId
-  );
-  return question.evidence;
 }

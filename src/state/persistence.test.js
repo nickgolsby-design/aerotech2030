@@ -22,7 +22,8 @@ describe("persistence", () => {
     const storage = memoryStorage();
     const state = [
       { type: "START", teamName: "Team 2", now: 1 },
-      { type: "ASK", stakeholderId: "ceo", questionId: "ceo-success" }
+      { type: "ASK", stakeholderId: "ceo", questionId: "ceo-problem" },
+      { type: "READ_DOCUMENT", documentId: "doc-workforce" }
     ].reduce(gameReducer, initialGameState);
 
     saveState(state, storage);
@@ -57,7 +58,7 @@ describe("persistence", () => {
     const loaded = loadState(initialGameState, storage);
     expect(loaded.bogus).toBeUndefined();
     expect(loaded.teamName).toBe("T");
-    expect(loaded.questionsLeft).toBe(initialGameState.questionsLeft);
+    expect(loaded.actionsLeft).toBe(initialGameState.actionsLeft);
   });
 
   it("survives storage that throws, and clears saves", () => {

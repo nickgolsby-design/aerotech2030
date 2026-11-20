@@ -1,0 +1,82 @@
+[
+  {
+    "id": "doc-erp-review",
+    "title": "ERP rollout: lessons learned (2023)",
+    "type": "Lessons learned review",
+    "owner": "Programme Office",
+    "summary": "Internal review of AeroTech's last major system rollout.",
+    "points": [
+      "The rollout went live on schedule and met its technical milestones.",
+      "Engineering output fell by about 20% for six months; the dip was not in the budget.",
+      "The business case assumed benefits within three months; they took more than a year to appear."
+    ],
+    "evidence": [
+      "cost-productivity",
+      "assume-quick-benefits"
+    ]
+  },
+  {
+    "id": "doc-risk-register",
+    "title": "Engineering IT risk register",
+    "type": "Risk assessment",
+    "owner": "IT Manager",
+    "summary": "The current risk register for engineering systems.",
+    "points": [
+      "Rated high: CATIA V5 entering sustaining support, with future operating system compatibility unconfirmed.",
+      "Rated medium: unsupported workstation builds kept only to run older V5 add-ins.",
+      "Rated low: licence server hardware nearing end of life."
+    ],
+    "evidence": [
+      "cyber-support-end",
+      "cyber-ageing"
+    ]
+  },
+  {
+    "id": "doc-airbus-review",
+    "title": "Airbus supplier performance review",
+    "type": "Customer feedback",
+    "owner": "Airbus Supplier Development",
+    "summary": "Airbus's annual review of AeroTech as a supplier.",
+    "points": [
+      "On-time delivery: 97%, rated strong. Delivery performance during supplier change programmes will be monitored closely.",
+      "Digital collaboration maturity: rated developing, below the leading suppliers.",
+      "Airbus does not prescribe suppliers' CAD tools; it assesses the capability they enable."
+    ],
+    "evidence": [
+      "supply-delivery-first",
+      "supply-no-mandate"
+    ]
+  },
+  {
+    "id": "doc-competitors",
+    "title": "Competitor activity briefing",
+    "type": "Competitor analysis",
+    "owner": "Business Development",
+    "summary": "A summary of competing tier-2 aerospace suppliers.",
+    "points": [
+      "Three of five tracked competitors announced digital engineering investments since 2024.",
+      "Two now offer customers model-based definition (MBD) data as standard.",
+      "Bid debrief: the 2025 work package AeroTech lost cited MBD capability as a factor."
+    ],
+    "evidence": [
+      "strategy-competitors",
+      "strategy-lost-bid"
+    ]
+  },
+  {
+    "id": "doc-workforce",
+    "title": "Engineering workforce profile",
+    "type": "Internal report",
+    "owner": "HR",
+    "summary": "Headcount, age profile and recruitment data for the 220 engineering users.",
+    "points": [
+      "Eight of the 25 most experienced CATIA engineers are eligible to retire within five years.",
+      "Training spend rose 30% over two years, yet graduate offer acceptance fell from 90% to 70%.",
+      "No documented succession plan exists for specialist CAD and CAM roles."
+    ],
+    "evidence": [
+      "wf-retirement",
+      "assume-training-only"
+    ]
+  }
+]

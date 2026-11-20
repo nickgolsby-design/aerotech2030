@@ -248,10 +248,10 @@ button.link-button {
 
 .band-chip.band-open,
 .trust-text-open { color: var(--good); }
+.band-chip.band-neutral,
+.trust-text-neutral { color: var(--fair); }
 .band-chip.band-cautious,
-.trust-text-cautious { color: var(--fair); }
-.band-chip.band-guarded,
-.trust-text-guarded { color: var(--poor); }
+.trust-text-cautious { color: var(--poor); }
 
 .influence-badge {
   display: inline-block;
@@ -309,8 +309,8 @@ button.link-button {
 }
 
 .trust-dot-open::before { background: var(--good); }
-.trust-dot-cautious::before { background: var(--fair); }
-.trust-dot-guarded::before { background: var(--poor); }
+.trust-dot-neutral::before { background: var(--fair); }
+.trust-dot-cautious::before { background: var(--poor); }
 
 .chip[aria-pressed="true"] {
   border-color: var(--accent);
@@ -435,8 +435,8 @@ button.link-button {
 }
 
 .map-band { opacity: 0.12; }
-.map-band.band-guarded { fill: var(--poor); }
-.map-band.band-cautious { fill: var(--fair); }
+.map-band.band-cautious { fill: var(--poor); }
+.map-band.band-neutral { fill: var(--fair); }
 .map-band.band-open { fill: var(--good); }
 
 .map-divider {
@@ -474,8 +474,8 @@ button.link-button {
 }
 
 .map-point.point-open circle { fill: var(--good); }
-.map-point.point-cautious circle { fill: var(--fair); }
-.map-point.point-guarded circle { fill: var(--poor); }
+.map-point.point-neutral circle { fill: var(--fair); }
+.map-point.point-cautious circle { fill: var(--poor); }
 
 .map-point text {
   fill: #fff;
@@ -645,6 +645,186 @@ button.link-button {
 .glossary dd {
   margin: 2px 0 0;
 }
+
+/* ------------------------------------------------------------------ */
+/* Public positions, follow-ups, documents                             */
+/* ------------------------------------------------------------------ */
+
+.public-position {
+  font-style: italic;
+  font-size: 0.88rem;
+  color: var(--text-h);
+}
+
+.profile .public-position {
+  margin: 8px 0;
+  font-style: normal;
+}
+
+.question-list button.follow-up {
+  border-left: 4px solid var(--accent);
+}
+
+.follow-up-label {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent-contrast);
+  background: var(--accent);
+}
+
+.already-known {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+}
+
+.doc-type {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
+.document h2 {
+  margin: 4px 0;
+}
+
+.supports {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Board review: positions, citations, responses                       */
+/* ------------------------------------------------------------------ */
+
+.trade-off {
+  margin: 4px 0 12px;
+  font-size: 0.9rem;
+}
+
+.trade-off span {
+  margin-right: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent-contrast);
+  background: var(--accent);
+}
+
+.positions,
+.cite {
+  margin: 0 0 12px;
+  padding: 0;
+  border: none;
+}
+
+.positions legend,
+.cite legend {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.position,
+.cite-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.position.chosen,
+.cite-item.chosen {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.position input,
+.cite-item input {
+  margin-top: 4px;
+}
+
+.position-argument,
+.position-accepts {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.9rem;
+}
+
+.position-accepts {
+  color: var(--text);
+  font-style: italic;
+}
+
+.cite-list {
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.cite-item {
+  padding: 6px 10px;
+  font-size: 0.85rem;
+}
+
+.cite-category {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.defended {
+  margin: 4px 0;
+}
+
+.board-response {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-left: 4px solid var(--fair);
+  border-radius: 4px;
+  background: var(--code-bg);
+}
+
+.board-response.rating-convincing { border-left-color: var(--good); }
+
+.challenge-label {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+.board-response.rating-unconvincing { border-left-color: var(--poor); }
+
+.board-response .reaction {
+  margin: 0 0 4px;
+}
+
+.reasons {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.88rem;
+}
+
+.reason-good::marker { color: var(--good); }
+.reason-gap::marker { color: var(--poor); }
 
 @media print {
   .sidebar,

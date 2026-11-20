@@ -1,164 +1,327 @@
 {
   "categories": [
-    {
-      "id": "strategy",
-      "label": "Strategy & Growth"
-    },
-    {
-      "id": "cost",
-      "label": "Cost & Finance"
-    },
-    {
-      "id": "manufacturing",
-      "label": "Manufacturing & CAM"
-    },
-    {
-      "id": "simulation",
-      "label": "Simulation & CAE"
-    },
-    {
-      "id": "workforce",
-      "label": "Workforce & Skills"
-    },
-    {
-      "id": "cybersecurity",
-      "label": "IT & Cybersecurity"
-    },
-    {
-      "id": "compliance",
-      "label": "Quality & Certification"
-    },
-    {
-      "id": "supplychain",
-      "label": "Customers & Supply Chain"
-    }
+    { "id": "strategy", "label": "Strategy & Growth" },
+    { "id": "cost", "label": "Cost & Finance" },
+    { "id": "manufacturing", "label": "Manufacturing & CAM" },
+    { "id": "simulation", "label": "Design & Simulation" },
+    { "id": "workforce", "label": "Workforce & Skills" },
+    { "id": "cybersecurity", "label": "IT & Cybersecurity" },
+    { "id": "compliance", "label": "Quality & Certification" },
+    { "id": "supplychain", "label": "Customers & Supply Chain" }
+  ],
+  "classifications": [
+    { "id": "strategic-driver", "label": "Strategic driver", "meaning": "A reason change may be required." },
+    { "id": "customer-requirement", "label": "Customer requirement", "meaning": "An expectation emerging from customers." },
+    { "id": "constraint", "label": "Constraint", "meaning": "A factor limiting the options available." },
+    { "id": "risk", "label": "Risk", "meaning": "A threat to success." },
+    { "id": "workforce-issue", "label": "Workforce issue", "meaning": "A skills, recruitment or capability concern." },
+    { "id": "opportunity", "label": "Opportunity", "meaning": "Potential value creation." },
+    { "id": "assumption", "label": "Assumption", "meaning": "A belief that needs validating before anyone relies on it." }
   ],
   "evidence": [
     {
-      "id": "strategy-growth",
+      "id": "strategy-capability",
       "category": "strategy",
+      "classification": "strategic-driver",
+      "supports": ["future"],
       "critical": false,
-      "text": "The Board wants AeroTech to expand into digitally-enabled aerospace programmes."
+      "text": "The CEO frames this as a capability decision, not a software purchase: success means contract wins, engineering effectiveness and resilience, and stagnation would do more damage than temporary disruption."
     },
     {
       "id": "strategy-lost-bid",
       "category": "strategy",
+      "classification": "strategic-driver",
+      "supports": ["future", "supplychain"],
       "critical": true,
-      "text": "AeroTech lost a 2025 bid partly because it lacked model-based definition (MBD) capability."
+      "text": "AeroTech lost a 2025 work package partly because it could not supply model-based definition (MBD) data."
+    },
+    {
+      "id": "strategy-competitors",
+      "category": "strategy",
+      "classification": "strategic-driver",
+      "supports": ["future"],
+      "critical": false,
+      "text": "Several competing tier-2 suppliers are investing in integrated digital engineering environments."
+    },
+    {
+      "id": "strategy-board-deferral",
+      "category": "strategy",
+      "classification": "constraint",
+      "supports": ["future", "cost"],
+      "critical": false,
+      "text": "The Board will defer the decision entirely if the recommendation doesn't show that implementation risks are understood."
+    },
+    {
+      "id": "assume-org-risk",
+      "category": "workforce",
+      "classification": "assumption",
+      "supports": ["change"],
+      "critical": false,
+      "text": "Belief to test: technology risk is bigger than organisational risk. The CEO thinks most teams get this the wrong way round, because organisational change is harder to quantify."
     },
     {
       "id": "cost-approval",
       "category": "cost",
+      "classification": "constraint",
+      "supports": ["cost"],
       "critical": true,
-      "text": "Projects above £5M require board approval and may delay implementation."
+      "text": "Programmes above £5M receive enhanced Board scrutiny and compete for funding with other strategic investments."
     },
     {
       "id": "cost-productivity",
       "category": "cost",
+      "classification": "risk",
+      "supports": ["cost", "change"],
       "critical": true,
-      "text": "The last ERP rollout cut engineering productivity by ~20% for six months, and none of it was budgeted."
+      "text": "Lost productivity, implementation support and process redesign usually cost more than licences. The 2023 ERP rollout cut engineering output by about 20% for six months, none of it budgeted."
     },
     {
-      "id": "cost-licence",
+      "id": "cost-change-share",
       "category": "cost",
-      "critical": false,
-      "text": "Licences are typically only a third of total migration cost; services, training and lost productivity dominate."
+      "classification": "risk",
+      "supports": ["cost", "change"],
+      "critical": true,
+      "text": "The draft business case puts about 85% of the budget into licences and hardware, leaving little for training, process redesign and change management."
     },
     {
-      "id": "cost-vendor-incentive",
+      "id": "assume-quick-benefits",
       "category": "cost",
+      "classification": "assumption",
+      "supports": ["cost"],
       "critical": false,
-      "text": "Vendors offer competitive-displacement discounts of up to 40% in year one, with higher renewal prices afterwards."
+      "text": "Belief to test: benefits will appear quickly without operational disruption. The Finance Director treats this claim in any business case with scepticism."
     },
     {
-      "id": "mfg-cam-dependency",
-      "category": "manufacturing",
-      "critical": true,
-      "text": "Existing CAM workflows are heavily dependent on CATIA outputs."
-    },
-    {
-      "id": "mfg-downtime",
-      "category": "manufacturing",
-      "critical": true,
-      "text": "One week of CAM downtime would put ~£1.2M of deliveries at risk of late-delivery penalties."
-    },
-    {
-      "id": "sim-tools",
-      "category": "simulation",
-      "critical": true,
-      "text": "Stress and thermal teams use Abaqus with associative links to CATIA-native geometry."
-    },
-    {
-      "id": "sim-rework",
-      "category": "simulation",
+      "id": "cost-capability-tradeoff",
+      "category": "cost",
+      "classification": "strategic-driver",
+      "supports": ["cost", "future"],
       "critical": false,
-      "text": "Analysts spend ~30% of their time cleaning geometry translated between tools."
+      "text": "Finance does not automatically prefer the cheapest option: a lower-cost choice that weakens capability or forces a second transition later is a false economy."
+    },
+    {
+      "id": "mfg-hidden-knowledge",
+      "category": "manufacturing",
+      "classification": "risk",
+      "supports": ["manufacturing"],
+      "critical": true,
+      "text": "Critical manufacturing knowledge sits in unofficial workflows: around 400 NC programs rely on in-house post-processor macros that nobody has documented."
+    },
+    {
+      "id": "mfg-production-continuity",
+      "category": "manufacturing",
+      "classification": "constraint",
+      "supports": ["manufacturing", "supplychain"],
+      "critical": true,
+      "text": "Production can't pause for the migration: Airbus and Rolls-Royce delivery schedules run continuously throughout."
+    },
+    {
+      "id": "assume-workflows",
+      "category": "manufacturing",
+      "classification": "assumption",
+      "supports": ["manufacturing", "change"],
+      "critical": false,
+      "text": "Belief to test: existing workflows can be recreated easily in a new environment. Engineering plans assume so; the Manufacturing Director says much of the capability lives in processes, not tools."
+    },
+    {
+      "id": "mfg-validation",
+      "category": "manufacturing",
+      "classification": "risk",
+      "supports": ["manufacturing", "cost"],
+      "critical": true,
+      "text": "Every migrated NC program must be re-verified on the machine before production use, and that validation effort is routinely underestimated."
+    },
+    {
+      "id": "mfg-integration",
+      "category": "manufacturing",
+      "classification": "opportunity",
+      "supports": ["manufacturing", "future"],
+      "critical": false,
+      "text": "Better data continuity between design and manufacturing could remove manual hand-offs that cause rework and scrap. Manufacturing warns that over-cautious governance can slow such improvements."
+    },
+    {
+      "id": "sim-integration",
+      "category": "simulation",
+      "classification": "risk",
+      "supports": ["simulation"],
+      "critical": true,
+      "text": "Stress and fatigue analysis depends on scripted links between CATIA V5 and Abaqus; any platform change breaks them until they are rebuilt and re-validated."
+    },
+    {
+      "id": "sim-capability",
+      "category": "simulation",
+      "classification": "strategic-driver",
+      "supports": ["simulation", "future"],
+      "critical": false,
+      "text": "The non-negotiable design capabilities are complex surfacing, large-assembly performance and composite design."
+    },
+    {
+      "id": "eng-productivity-dip",
+      "category": "workforce",
+      "classification": "risk",
+      "supports": ["change", "cost"],
+      "critical": true,
+      "text": "Migration will reduce engineering output on live programmes, and the next Airbus work package is due in the middle of any likely transition."
+    },
+    {
+      "id": "assume-productivity",
+      "category": "workforce",
+      "classification": "assumption",
+      "supports": ["change", "cost"],
+      "critical": false,
+      "text": "Belief to test: new software automatically improves productivity. The Chief Design Engineer expects 12–18 months before engineers are faster than they are today."
     },
     {
       "id": "wf-retirement",
       "category": "workforce",
+      "classification": "workforce-issue",
+      "supports": ["change"],
       "critical": true,
-      "text": "Many senior CAD engineers are approaching retirement."
+      "text": "Eight of the 25 most experienced CATIA engineers could retire within five years, and much of their workflow knowledge is undocumented."
     },
     {
-      "id": "wf-training",
+      "id": "wf-recruitment",
       "category": "workforce",
+      "classification": "workforce-issue",
+      "supports": ["change", "future"],
       "critical": true,
-      "text": "An experienced CAD engineer takes 3–6 months to reach full productivity on a new platform."
+      "text": "Graduates increasingly arrive trained on newer tools; two candidates declined offers in 2025, citing AeroTech's ageing software."
     },
     {
-      "id": "wf-change-fatigue",
+      "id": "assume-training-only",
       "category": "workforce",
-      "critical": true,
-      "text": "The last staff survey flagged change fatigue; two key engineers cited it in exit interviews."
-    },
-    {
-      "id": "cyber-ageing",
-      "category": "cybersecurity",
+      "classification": "assumption",
+      "supports": ["change"],
       "critical": false,
-      "text": "Cybersecurity concerns are increasing around ageing software."
+      "text": "Belief to test: recruitment challenges can be solved through training alone. HR doubts that training budgets will attract engineers who expect modern tools."
+    },
+    {
+      "id": "wf-training-burden",
+      "category": "workforce",
+      "classification": "risk",
+      "supports": ["change", "cost"],
+      "critical": true,
+      "text": "Retraining 220 engineering users would take 6–10 days each plus super-user support, a burden on morale during peak delivery."
+    },
+    {
+      "id": "assume-acceptance",
+      "category": "workforce",
+      "classification": "assumption",
+      "supports": ["change"],
+      "critical": false,
+      "text": "Belief to test: engineers will accept change. Several senior engineers privately expect any migration to be scaled back or reversed."
+    },
+    {
+      "id": "wf-personal-workflows",
+      "category": "workforce",
+      "classification": "risk",
+      "supports": ["manufacturing", "change"],
+      "critical": false,
+      "text": "Senior engineers say today's workflows work well. Many valuable templates, macros and part-family tables were built by individuals and exist only on their own machines."
+    },
+    {
+      "id": "wf-graduate-appeal",
+      "category": "workforce",
+      "classification": "opportunity",
+      "supports": ["change", "future"],
+      "critical": false,
+      "text": "Early-career engineers say today's workflows won't suit future engineers, and see modern, connected tools as the sign of a forward-looking employer."
     },
     {
       "id": "cyber-support-end",
       "category": "cybersecurity",
+      "classification": "risk",
+      "supports": ["security", "future"],
       "critical": true,
-      "text": "Under sustaining support, security patches for new Windows releases are no longer guaranteed."
+      "text": "CATIA V5 is moving to sustaining support: fewer fixes, and compatibility with future Windows releases is not assured."
     },
     {
-      "id": "cyber-data-residency",
+      "id": "cyber-ageing",
       "category": "cybersecurity",
+      "classification": "risk",
+      "supports": ["security"],
       "critical": false,
-      "text": "Defence-related work requires export-controlled data to stay in UK-hosted environments."
+      "text": "Some engineering workstations run unsupported operating system builds, kept only to run older V5 add-ins."
+    },
+    {
+      "id": "cyber-export-control",
+      "category": "cybersecurity",
+      "classification": "constraint",
+      "supports": ["security", "compliance"],
+      "critical": true,
+      "text": "Defence-related data from BAE Systems work must stay in UK-controlled environments, which limits cloud-hosted options."
+    },
+    {
+      "id": "cyber-lifecycle",
+      "category": "cybersecurity",
+      "classification": "opportunity",
+      "supports": ["security", "cost"],
+      "critical": false,
+      "text": "A current platform would simplify lifecycle management, patching and licence administration."
     },
     {
       "id": "comp-certification",
       "category": "compliance",
+      "classification": "constraint",
+      "supports": ["compliance"],
       "critical": true,
-      "text": "Certification effort is frequently underestimated."
+      "text": "AS9100 and customer quality obligations are unchanged whatever the platform; certification cannot lapse during the transition."
+    },
+    {
+      "id": "comp-governance-work",
+      "category": "compliance",
+      "classification": "risk",
+      "supports": ["compliance", "cost"],
+      "critical": true,
+      "text": "Procedures, training records, configuration controls and audit evidence would all need rewriting, work that engineering plans rarely include. Quality insists governance must be protected."
     },
     {
       "id": "comp-traceability",
       "category": "compliance",
+      "classification": "risk",
+      "supports": ["compliance"],
       "critical": true,
-      "text": "Every migrated production model must be re-verified against its released drawing under AS9100."
+      "text": "Migrated models must keep a traceable link to released configurations; losing it would be a major audit finding."
     },
     {
       "id": "comp-legacy-data",
       "category": "compliance",
-      "critical": true,
-      "text": "Over 40,000 V5 parts must remain retrievable and editable for in-service products for 25+ years."
+      "classification": "constraint",
+      "supports": ["compliance", "cost"],
+      "critical": false,
+      "text": "Archived V5 data must stay readable for the 20+ year service life of the parts AeroTech supports."
     },
     {
-      "id": "supply-airbus-3dx",
+      "id": "supply-collaboration",
       "category": "supplychain",
+      "classification": "customer-requirement",
+      "supports": ["supplychain", "future"],
       "critical": true,
-      "text": "Airbus is moving key suppliers onto 3DEXPERIENCE-based collaboration for new programmes."
+      "text": "Airbus is watching suppliers' ability to collaborate across increasingly digital supply chains; in its view, failing to evolve carries more strategic risk than the cost of change."
     },
     {
-      "id": "supply-native-format",
+      "id": "supply-delivery-first",
       "category": "supplychain",
+      "classification": "customer-requirement",
+      "supports": ["supplychain", "manufacturing"],
       "critical": true,
-      "text": "Rolls-Royce contracts require native-format model exchange; translated models need customer approval."
+      "text": "During a supplier's transformation, customers care more about delivery performance than technology ambition."
+    },
+    {
+      "id": "assume-customer-static",
+      "category": "supplychain",
+      "classification": "assumption",
+      "supports": ["supplychain", "future"],
+      "critical": false,
+      "text": "Belief to test: customer expectations will stay as they are. Airbus expects supplier digital requirements to change significantly within the decade."
+    },
+    {
+      "id": "supply-no-mandate",
+      "category": "supplychain",
+      "classification": "customer-requirement",
+      "supports": ["supplychain"],
+      "critical": false,
+      "text": "Airbus does not mandate a CAD platform; it judges suppliers on the capability their tools enable."
     }
   ]
 }

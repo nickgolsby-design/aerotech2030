@@ -2,8 +2,7 @@
   "platforms": [
     "Stay with CATIA V5",
     "3DEXPERIENCE",
-    "Siemens NX",
-    "PTC Creo"
+    "Siemens NX"
   ],
   "criteria": [
     {
@@ -75,16 +74,6 @@
       "simulation": 8,
       "compliance": 8,
       "supplychain": 7,
-      "security": 8,
-      "change": 3
-    },
-    "PTC Creo": {
-      "cost": 6,
-      "manufacturing": 7,
-      "future": 7,
-      "simulation": 6,
-      "compliance": 7,
-      "supplychain": 4,
       "security": 8,
       "change": 3
     }

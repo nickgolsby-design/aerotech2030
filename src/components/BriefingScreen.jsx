@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { QUESTION_BUDGET } from "../data/gameConfig.js";
+import { ACTION_BUDGET } from "../data/gameConfig.js";
 import { MAX_TEAM_NAME_LENGTH } from "../state/gameReducer.js";
 import { platforms } from "../data/platformProfiles.js";
 import { timeline, budget, board, deliverable } from "../data/briefing.js";
@@ -105,13 +105,15 @@ export default function BriefingScreen({ onStart }) {
           <h3>How the engagement works</h3>
           <ul>
             <li>
-              You have <strong>{QUESTION_BUDGET} interview questions</strong>.
-              Choose who to ask and what to ask carefully.
+              You have <strong>{ACTION_BUDGET} investigation actions</strong>:
+              each interview question or document review uses one. You
+              can&apos;t investigate everything, so decide what information
+              matters.
             </li>
             <li>
-              Stakeholders share more when they trust you. The way you frame
-              a question matters, and influential stakeholders matter most to
-              the board.
+              Generic questions get public positions. Specific questions
+              about assumptions, dependencies and risks, and follow-ups,
+              reveal what really matters.
             </li>
             <li>
               The board will challenge the areas you investigated least, then

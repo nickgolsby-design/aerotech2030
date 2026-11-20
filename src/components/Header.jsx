@@ -33,7 +33,7 @@ export default function Header({ state, onRestart }) {
         <div className="header-stats">
           {state.phase === "investigation" && (
             <span className="header-stat" aria-live="polite">
-              {state.questionsLeft} questions left
+              {state.actionsLeft} actions left
             </span>
           )}
           <Elapsed startedAt={state.startedAt} finishedAt={state.finishedAt} />

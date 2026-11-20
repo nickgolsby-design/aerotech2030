@@ -3,35 +3,55 @@
     "id": "ceo",
     "name": "CEO",
     "shortName": "CEO",
-    "role": "Sets strategic direction; chairs the board.",
-    "influence": 95,
+    "role": "Sets strategic direction and chairs the Board.",
+    "influence": "High",
     "initialTrust": 55,
     "category": "strategy",
+    "publicPosition": "Supports transformation if it improves business capability.",
+    "underlyingConcern": "AeroTech becoming a build-to-print supplier that loses ground on new programmes.",
+    "blindSpot": "Underestimates how long organisational change takes to pay back.",
+    "challengeQuestion": "How does your recommendation improve our competitive capability?",
     "questions": [
       {
-        "id": "ceo-success",
-        "text": "What does success look like for AeroTech in 2030?",
-        "trustDelta": 5,
-        "response": "Future competitiveness is my primary concern. We can't stay a build-to-print shop forever.",
-        "evidence": [
-          "strategy-growth"
-        ]
-      },
-      {
-        "id": "ceo-customers",
-        "text": "Which customer programmes are driving the timing of this decision?",
-        "trustDelta": -5,
-        "response": "Frankly, Airbus. Their supplier team has been clear about where new programme collaboration is heading.",
-        "evidence": [
-          "supply-airbus-3dx"
-        ]
-      },
-      {
-        "id": "ceo-leading",
-        "text": "Surely staying on CATIA V5 is the safest option?",
-        "trustDelta": -15,
-        "response": "If I wanted the safe answer I wouldn't have hired consultants.",
+        "id": "ceo-concerns",
+        "text": "What concerns you most about this decision?",
+        "depth": "surface",
+        "trustDelta": 0,
+        "response": "That we make the right call for the business. The Board wants a recommendation it can stand behind.",
         "evidence": []
+      },
+      {
+        "id": "ceo-problem",
+        "text": "What business problem are we actually trying to solve?",
+        "depth": "probing",
+        "trustDelta": 5,
+        "response": "Everyone talks about software features. I'm buying capability: contract wins, engineering effectiveness, resilience. Standing still worries me more than a bumpy year.",
+        "evidence": ["strategy-capability"]
+      },
+      {
+        "id": "ceo-competitors",
+        "text": "What are competitors doing that AeroTech isn't?",
+        "depth": "probing",
+        "trustDelta": 0,
+        "response": "Several of our tier-2 rivals are investing heavily in integrated digital engineering. They're pitching that capability to our customers.",
+        "evidence": ["strategy-competitors"]
+      },
+      {
+        "id": "ceo-lost-work",
+        "text": "Has that gap already cost AeroTech any work?",
+        "depth": "deep",
+        "requires": "ceo-competitors",
+        "trustDelta": -5,
+        "response": "Yes, though I don't advertise it. We lost a 2025 work package partly because we couldn't supply model-based definition data.",
+        "evidence": ["strategy-lost-bid"]
+      },
+      {
+        "id": "ceo-reject",
+        "text": "What would make the Board reject every proposal presented to it?",
+        "depth": "probing",
+        "trustDelta": 5,
+        "response": "A team that hasn't understood implementation risk. And in my experience people fixate on the technology and underestimate the organisational side, because it's harder to put a number on.",
+        "evidence": ["strategy-board-deferral", "assume-org-risk"]
       }
     ]
   },
@@ -39,71 +59,55 @@
     "id": "finance-director",
     "name": "Finance Director",
     "shortName": "FD",
-    "role": "Owns the investment case and capital approval.",
-    "influence": 95,
+    "role": "Owns the investment case, cash flow and programme budgets.",
+    "influence": "High",
     "initialTrust": 45,
     "category": "cost",
+    "publicPosition": "Supports transformation only if the implementation risks are understood.",
+    "underlyingConcern": "A repeat of the ERP rollout, where hidden costs appeared after approval.",
+    "blindSpot": "Treats organisational capability as a cost rather than an asset.",
+    "challengeQuestion": "Convince me this is not simply an expensive technology upgrade.",
     "questions": [
       {
-        "id": "fd-investment-case",
-        "text": "How will the board judge the investment case?",
-        "trustDelta": 5,
-        "response": "Migration costs must include licences, training and productivity loss. And mind the approval threshold.",
-        "evidence": [
-          "cost-approval"
-        ]
-      },
-      {
-        "id": "fd-hidden-costs",
-        "text": "What hidden costs have hurt previous IT projects here?",
-        "trustDelta": -5,
-        "response": "The ERP rollout. Nobody budgeted for engineers being slower for half a year. I won't approve that mistake twice.",
-        "evidence": [
-          "cost-productivity"
-        ]
-      },
-      {
-        "id": "fd-leading",
-        "text": "So the budget is flexible if the case is strong enough?",
-        "trustDelta": -15,
-        "response": "No budget is flexible. Let's move on.",
+        "id": "fd-budget",
+        "text": "What budget is available for the new platform?",
+        "depth": "surface",
+        "trustDelta": 0,
+        "response": "There's money pencilled in, but the number matters less than what it buys. Bring me a case, not a price.",
         "evidence": []
-      }
-    ]
-  },
-  {
-    "id": "manufacturing-director",
-    "name": "Manufacturing Director",
-    "shortName": "MD",
-    "role": "Runs machining and assembly across two sites.",
-    "influence": 85,
-    "initialTrust": 50,
-    "category": "manufacturing",
-    "questions": [
+      },
       {
-        "id": "mfg-data-flow",
-        "text": "Can you walk me through how CAD data reaches the shop floor?",
+        "id": "fd-underestimate",
+        "text": "Which costs are easiest to underestimate in a programme like this?",
+        "depth": "probing",
         "trustDelta": 5,
-        "response": "Production disruption is my biggest concern during migration. Every NC program starts from a CATIA model.",
-        "evidence": [
-          "mfg-cam-dependency"
-        ]
+        "response": "Lost productivity, implementation support and process redesign. When we rolled out ERP in 2023, engineering output fell about 20% for six months and none of it was in the budget.",
+        "evidence": ["cost-productivity"]
       },
       {
-        "id": "mfg-downtime",
-        "text": "What would a week of CAM downtime actually cost?",
-        "trustDelta": -5,
-        "response": "Let me pull the order book... over a million pounds of deliveries exposed to penalties.",
-        "evidence": [
-          "mfg-downtime"
-        ]
+        "id": "fd-unasked",
+        "text": "What financial question has nobody asked yet?",
+        "depth": "deep",
+        "requires": "fd-underestimate",
+        "trustDelta": 5,
+        "response": "How much of the budget funds technology versus organisational change. The current draft puts about 85% into licences and hardware.",
+        "evidence": ["cost-change-share"]
       },
       {
-        "id": "mfg-leading",
-        "text": "Could production simply pause during the cut-over?",
-        "trustDelta": -15,
-        "response": "Have you ever run a factory? No.",
-        "evidence": []
+        "id": "fd-assumptions",
+        "text": "Which assumptions in a business case like this would concern you most?",
+        "depth": "probing",
+        "trustDelta": 0,
+        "response": "Any claim that benefits arrive quickly without disrupting operations. I've never seen it happen.",
+        "evidence": ["assume-quick-benefits"]
+      },
+      {
+        "id": "fd-evaluate",
+        "text": "How will the Board evaluate an investment of this size?",
+        "depth": "probing",
+        "trustDelta": 0,
+        "response": "Anything over £5M gets enhanced scrutiny and competes with our other strategic investments. And cheapest isn't automatically best if it forces a second transition later.",
+        "evidence": ["cost-approval", "cost-capability-tradeoff"]
       }
     ]
   },
@@ -111,73 +115,111 @@
     "id": "chief-design-engineer",
     "name": "Chief Design Engineer",
     "shortName": "CDE",
-    "role": "Leads 60 design engineers; owns CAD standards.",
-    "influence": 90,
+    "role": "Leads design engineering and simulation for all customer programmes.",
+    "influence": "High",
     "initialTrust": 50,
-    "category": "workforce",
+    "category": "simulation",
+    "publicPosition": "Supports capability growth but fears the productivity loss.",
+    "underlyingConcern": "Missing a major Airbus milestone in the middle of a migration.",
+    "blindSpot": "Underestimates how much the team's expertise depends on a few individuals.",
+    "challengeQuestion": "How will my team keep delivering live programmes while learning a new system?",
     "questions": [
       {
-        "id": "cde-team",
-        "text": "What makes your design team effective today?",
-        "trustDelta": 5,
-        "response": "Capability retention and productivity matter most. Our best people carry 20 years of V5 know-how.",
-        "evidence": [
-          "wf-retirement"
-        ]
-      },
-      {
-        "id": "cde-legacy",
-        "text": "How much legacy V5 data must remain usable after a migration?",
-        "trustDelta": -5,
-        "response": "All of it, effectively. Our parts fly for decades and we must support them.",
-        "evidence": [
-          "comp-legacy-data"
-        ]
-      },
-      {
-        "id": "cde-leading",
-        "text": "Your engineers will adapt quickly to any tool, won't they?",
-        "trustDelta": -15,
-        "response": "That's a very consultant thing to say.",
+        "id": "cde-feel",
+        "text": "How do you feel about changing platforms?",
+        "depth": "surface",
+        "trustDelta": 0,
+        "response": "Cautiously open. Capability matters, but so does keeping programmes on track.",
         "evidence": []
+      },
+      {
+        "id": "cde-nonnegotiable",
+        "text": "Which design capabilities are non-negotiable, whatever platform we choose?",
+        "depth": "probing",
+        "trustDelta": 5,
+        "response": "Complex surfacing, large-assembly performance and composite design. Without those we can't do the work we're paid for.",
+        "evidence": ["sim-capability"]
+      },
+      {
+        "id": "cde-dependencies",
+        "text": "Which dependencies are people ignoring when they talk about switching?",
+        "depth": "probing",
+        "trustDelta": 0,
+        "response": "Simulation. Our stress and fatigue work relies on scripted links between V5 and Abaqus. Change the platform and those links break until we rebuild and re-validate them.",
+        "evidence": ["sim-integration"]
+      },
+      {
+        "id": "cde-fail",
+        "text": "What would make this programme fail on the engineering side?",
+        "depth": "probing",
+        "trustDelta": -5,
+        "response": "Running a migration while we deliver. The next Airbus work package lands right in the middle of any realistic transition, and output will drop.",
+        "evidence": ["eng-productivity-dip"]
+      },
+      {
+        "id": "cde-recovery",
+        "text": "How long before engineers are faster than they are today?",
+        "depth": "deep",
+        "requires": "cde-fail",
+        "trustDelta": 5,
+        "response": "Vendors say weeks. My honest estimate is 12 to 18 months. New software doesn't make anyone faster on day one.",
+        "evidence": ["assume-productivity"]
       }
     ]
   },
   {
-    "id": "it-manager",
-    "name": "IT Manager",
-    "shortName": "IT",
-    "role": "Responsible for infrastructure, licensing servers and security.",
-    "influence": 75,
-    "initialTrust": 60,
-    "category": "cybersecurity",
+    "id": "manufacturing-director",
+    "name": "Manufacturing Director",
+    "shortName": "MD",
+    "role": "Runs CNC production and CAM programming at both sites.",
+    "influence": "High",
+    "initialTrust": 50,
+    "category": "manufacturing",
+    "publicPosition": "Will oppose any strategy that threatens delivery.",
+    "underlyingConcern": "Undocumented shop-floor knowledge being lost in the migration.",
+    "blindSpot": "Underestimates the long-term cost of the inefficiencies the shop floor has learned to work around.",
+    "challengeQuestion": "What happens if implementation impacts production delivery?",
     "questions": [
       {
-        "id": "it-concerns",
-        "text": "What concerns you most about the current engineering IT estate?",
-        "trustDelta": 5,
-        "response": "Support lifecycle and patching are becoming increasingly important.",
-        "evidence": [
-          "cyber-ageing"
-        ]
-      },
-      {
-        "id": "it-support-end",
-        "text": "What changes, technically, once V5 enters sustaining support?",
+        "id": "md-success",
+        "text": "How would you measure success for this programme?",
+        "depth": "surface",
         "trustDelta": 0,
-        "response": "We lose guarantees on compatibility with new Windows builds, and that drives our patch schedule.",
-        "evidence": [
-          "cyber-support-end"
-        ]
+        "response": "Minimal production disruption, and fewer inefficiencies between engineering and the shop floor.",
+        "evidence": []
       },
       {
-        "id": "it-leading",
-        "text": "Moving everything to the cloud would solve the security issues, right?",
-        "trustDelta": -10,
-        "response": "Not for us. Some of our data is export-controlled and has to stay onshore.",
-        "evidence": [
-          "cyber-data-residency"
-        ]
+        "id": "md-stop",
+        "text": "What could stop production during a migration?",
+        "depth": "probing",
+        "trustDelta": 5,
+        "response": "Engineering can tolerate disruption; factories can't. Our Airbus and Rolls-Royce schedules don't pause for a software project.",
+        "evidence": ["mfg-production-continuity"]
+      },
+      {
+        "id": "md-assumptions",
+        "text": "Which assumptions about manufacturing worry you?",
+        "depth": "probing",
+        "trustDelta": 0,
+        "response": "That every workflow can be recreated easily somewhere else. Much of our capability lives in processes, not software, and every migrated NC program must be proven on the machine again.",
+        "evidence": ["assume-workflows", "mfg-validation"]
+      },
+      {
+        "id": "md-knowledge",
+        "text": "Where is that process knowledge actually held?",
+        "depth": "deep",
+        "requires": "md-assumptions",
+        "trustDelta": 5,
+        "response": "In people's heads and in unofficial macros. About 400 NC programs go through in-house post-processors that nobody has ever documented.",
+        "evidence": ["mfg-hidden-knowledge"]
+      },
+      {
+        "id": "md-platform",
+        "text": "Which platform characteristic matters most to manufacturing?",
+        "depth": "probing",
+        "trustDelta": 0,
+        "response": "Integration across the engineering and manufacturing lifecycle. Every manual hand-off costs us rework and scrap, and over-cautious governance slows down every attempt to fix them.",
+        "evidence": ["mfg-integration"]
       }
     ]
   },
@@ -185,179 +227,295 @@
     "id": "quality-manager",
     "name": "Quality Manager",
     "shortName": "QM",
-    "role": "Owns AS9100 certification and customer audits.",
-    "influence": 80,
+    "role": "Owns AS9100 certification, configuration control and customer audits.",
+    "influence": "Medium",
     "initialTrust": 45,
     "category": "compliance",
+    "publicPosition": "Will oppose any strategy that creates compliance uncertainty.",
+    "underlyingConcern": "Being blamed for an audit finding caused by someone else's project.",
+    "blindSpot": "Treats every change as risk, and underestimates the risk of standing still.",
+    "challengeQuestion": "What evidence supports your confidence in compliance continuity?",
     "questions": [
       {
-        "id": "qm-certification",
-        "text": "How does the CAD platform affect your certification work?",
-        "trustDelta": 5,
-        "response": "Compliance and traceability cannot be compromised. People always underestimate this part.",
-        "evidence": [
-          "comp-certification"
-        ]
-      },
-      {
-        "id": "qm-traceability",
-        "text": "What happens to the audit trail when models are migrated?",
-        "trustDelta": -5,
-        "response": "Every production model has to be re-verified. That's a lot of inspection hours.",
-        "evidence": [
-          "comp-traceability"
-        ]
-      },
-      {
-        "id": "qm-leading",
-        "text": "Certification is mostly paperwork, isn't it?",
-        "trustDelta": -20,
-        "response": "I think we're done here.",
+        "id": "qm-role",
+        "text": "How does quality fit into this decision?",
+        "depth": "surface",
+        "trustDelta": 0,
+        "response": "Every change has governance implications. My job is to make sure we stay certified.",
         "evidence": []
+      },
+      {
+        "id": "qm-hidden",
+        "text": "What hidden work do engineering teams usually overlook in changes like this?",
+        "depth": "probing",
+        "trustDelta": 5,
+        "response": "Procedures, training records, configuration controls, audit evidence. All of it needs rewriting, and it's never in the engineering plan.",
+        "evidence": ["comp-governance-work"]
+      },
+      {
+        "id": "qm-failure",
+        "text": "What would failure look like from a quality perspective?",
+        "depth": "probing",
+        "trustDelta": 0,
+        "response": "Losing confidence in configuration control. If a migrated model can't be traced to its released configuration, that's a major audit finding.",
+        "evidence": ["comp-traceability"]
+      },
+      {
+        "id": "qm-auditors",
+        "text": "What would auditors expect to see during the transition?",
+        "depth": "deep",
+        "requires": "qm-failure",
+        "trustDelta": 5,
+        "response": "That nothing about our obligations changed: AS9100 still applies on day one of any migration. And that we can still open archived V5 data for the 20-year life of the parts.",
+        "evidence": ["comp-certification", "comp-legacy-data"]
       }
     ]
   },
   {
-    "id": "cae-lead",
-    "name": "Simulation (CAE) Lead",
-    "shortName": "CAE",
-    "role": "Leads stress, thermal and fatigue analysis.",
-    "influence": 70,
-    "initialTrust": 50,
-    "category": "simulation",
-    "questions": [
-      {
-        "id": "cae-tools",
-        "text": "Which analysis tools does your team depend on?",
-        "trustDelta": 5,
-        "response": "Abaqus, mainly, linked directly to CATIA geometry. Break that link and we're redrawing everything.",
-        "evidence": [
-          "sim-tools"
-        ]
-      },
-      {
-        "id": "cae-rework",
-        "text": "How much time goes into preparing geometry for analysis?",
-        "trustDelta": -5,
-        "response": "Too much. Translation clean-up eats roughly a third of our week.",
-        "evidence": [
-          "sim-rework"
-        ]
-      },
-      {
-        "id": "cae-leading",
-        "text": "Simulation is secondary to design in this decision, isn't it?",
-        "trustDelta": -15,
-        "response": "Tell that to the certification authority.",
-        "evidence": []
-      }
-    ]
-  },
-  {
-    "id": "hr-training-manager",
-    "name": "HR & Training Manager",
+    "id": "hr-manager",
+    "name": "HR Manager",
     "shortName": "HR",
-    "role": "Manages skills, recruitment and staff engagement.",
-    "influence": 60,
+    "role": "Responsible for recruitment, retention and skills development.",
+    "influence": "Medium",
     "initialTrust": 55,
     "category": "workforce",
+    "publicPosition": "Concerned with capability development and recruitment.",
+    "underlyingConcern": "Losing experienced engineers before their knowledge is passed on.",
+    "blindSpot": "Assumes a training plan will be enough to carry people through change.",
+    "challengeQuestion": "Who will train 220 engineers, and what happens to morale while they learn?",
     "questions": [
       {
-        "id": "hr-readiness",
-        "text": "How ready is the workforce for a major tool change?",
-        "trustDelta": 5,
-        "response": "Ready to learn, but realistic timelines are months, not weeks.",
-        "evidence": [
-          "wf-training"
-        ]
-      },
-      {
-        "id": "hr-survey",
-        "text": "What did staff say in the most recent engagement survey?",
-        "trustDelta": -5,
-        "response": "Change fatigue came up a lot. We've already lost two good engineers who mentioned it.",
-        "evidence": [
-          "wf-change-fatigue"
-        ]
-      },
-      {
-        "id": "hr-leading",
-        "text": "A week of online courses should cover the training, surely?",
-        "trustDelta": -10,
-        "response": "I'll pretend you didn't say that.",
-        "evidence": []
-      }
-    ]
-  },
-  {
-    "id": "customer-programmes-director",
-    "name": "Customer Programmes Director",
-    "shortName": "CPD",
-    "role": "Manages Airbus and Rolls-Royce relationships and bids.",
-    "influence": 85,
-    "initialTrust": 45,
-    "category": "supplychain",
-    "questions": [
-      {
-        "id": "cpd-expectations",
-        "text": "What do key customers expect from suppliers' digital tools?",
-        "trustDelta": 5,
-        "response": "Native data, increasingly. Translations need sign-off and that slows every change.",
-        "evidence": [
-          "supply-native-format"
-        ]
-      },
-      {
-        "id": "cpd-lost-bids",
-        "text": "Have you lost any bids because of digital capability?",
-        "trustDelta": -5,
-        "response": "One last year. The customer wanted model-based definition and we couldn't offer it.",
-        "evidence": [
-          "strategy-lost-bid"
-        ]
-      },
-      {
-        "id": "cpd-leading",
-        "text": "Customers will accept neutral STEP files, won't they?",
-        "trustDelta": -15,
-        "response": "You clearly haven't read their supplier manuals.",
-        "evidence": []
-      }
-    ]
-  },
-  {
-    "id": "procurement-manager",
-    "name": "Procurement Manager",
-    "shortName": "PM",
-    "role": "Negotiates software and services contracts.",
-    "influence": 55,
-    "initialTrust": 60,
-    "category": "cost",
-    "questions": [
-      {
-        "id": "proc-licences",
-        "text": "How are engineering software costs structured today?",
-        "trustDelta": 5,
-        "response": "Licences are the visible bit. Services and training are where budgets usually break.",
-        "evidence": [
-          "cost-licence"
-        ]
-      },
-      {
-        "id": "proc-leverage",
-        "text": "What negotiating leverage do we have with vendors?",
+        "id": "hr-training",
+        "text": "Will staff need training on a new system?",
+        "depth": "surface",
         "trustDelta": 0,
-        "response": "Plenty in year one. Everyone wants to displace a competitor. Watch the renewal terms though.",
-        "evidence": [
-          "cost-vendor-incentive"
-        ]
+        "response": "Of course. We'd put a plan together, as we would for any new system.",
+        "evidence": []
       },
       {
-        "id": "proc-leading",
-        "text": "Can't we just sign the cheapest quote?",
-        "trustDelta": -10,
-        "response": "Cheapest to sign is rarely cheapest to own.",
+        "id": "hr-shortages",
+        "text": "Which skills gaps worry you over the next five years?",
+        "depth": "probing",
+        "trustDelta": 5,
+        "response": "Experience. Eight of our 25 most experienced CATIA engineers could retire within five years, and a lot of what they know isn't written down.",
+        "evidence": ["wf-retirement"]
+      },
+      {
+        "id": "hr-recruits",
+        "text": "How do our current tools affect recruitment?",
+        "depth": "probing",
+        "trustDelta": 0,
+        "response": "More than people admit. Graduates arrive trained on newer tools, and two candidates turned us down last year citing our ageing software.",
+        "evidence": ["wf-recruitment"]
+      },
+      {
+        "id": "hr-training-gap",
+        "text": "Could training existing staff close that gap on its own?",
+        "depth": "deep",
+        "requires": "hr-recruits",
+        "trustDelta": 5,
+        "response": "I doubt it. Training budgets don't attract people who expect modern tools. And retraining 220 users is 6 to 10 days each plus super-user support, during peak delivery.",
+        "evidence": ["assume-training-only", "wf-training-burden"]
+      }
+    ]
+  },
+  {
+    "id": "it-manager",
+    "name": "IT Manager",
+    "shortName": "IT",
+    "role": "Responsible for infrastructure, security and software lifecycle.",
+    "influence": "Medium",
+    "initialTrust": 60,
+    "category": "cybersecurity",
+    "publicPosition": "Increasingly concerned about lifecycle and supportability.",
+    "underlyingConcern": "Being left to support an ageing estate with shrinking vendor help.",
+    "blindSpot": "Sees the decision as an infrastructure project and underestimates the people side.",
+    "challengeQuestion": "How will you keep defence-related data compliant on the new platform?",
+    "questions": [
+      {
+        "id": "it-ready",
+        "text": "Is the IT infrastructure ready for a new platform?",
+        "depth": "surface",
+        "trustDelta": 0,
+        "response": "Broadly. Any new platform will need some infrastructure work, but nothing we can't plan for.",
         "evidence": []
+      },
+      {
+        "id": "it-support",
+        "text": "What support risks does IT face if nothing changes?",
+        "depth": "probing",
+        "trustDelta": 5,
+        "response": "V5 is moving to sustaining support. Fewer fixes, and no guarantee it'll run on future Windows releases.",
+        "evidence": ["cyber-support-end"]
+      },
+      {
+        "id": "it-lifecycle",
+        "text": "How should lifecycle management influence this decision?",
+        "depth": "probing",
+        "trustDelta": 0,
+        "response": "A current platform would make patching and licence administration far simpler. Today I keep unsupported workstation builds alive just to run old V5 add-ins.",
+        "evidence": ["cyber-lifecycle", "cyber-ageing"]
+      },
+      {
+        "id": "it-cloud",
+        "text": "What would limit a cloud-hosted option?",
+        "depth": "deep",
+        "requires": "it-support",
+        "trustDelta": 0,
+        "response": "Our BAE Systems work. Defence-related data has to stay in UK-controlled environments, which rules out some hosting models.",
+        "evidence": ["cyber-export-control"]
+      }
+    ]
+  },
+  {
+    "id": "airbus-representative",
+    "name": "Airbus Representative",
+    "shortName": "AIR",
+    "role": "Airbus supplier development lead for AeroTech's programmes.",
+    "influence": "High",
+    "initialTrust": 50,
+    "category": "supplychain",
+    "publicPosition": "Focused on long-term digital capability in the supply chain.",
+    "underlyingConcern": "A key supplier slipping on delivery while it transforms.",
+    "blindSpot": "Underestimates what digital transformation costs a supplier of AeroTech's size.",
+    "challengeQuestion": "How well will this recommendation serve AeroTech in ten years rather than one?",
+    "questions": [
+      {
+        "id": "ab-relationship",
+        "text": "How is the relationship with AeroTech going?",
+        "depth": "surface",
+        "trustDelta": 0,
+        "response": "Positive. AeroTech is a reliable supplier and we value that.",
+        "evidence": []
+      },
+      {
+        "id": "ab-trends",
+        "text": "Which capability trends matter most to Airbus over the next decade?",
+        "depth": "probing",
+        "trustDelta": 5,
+        "response": "Collaboration across increasingly digital supply chains. Frankly, a supplier that fails to evolve worries us more than one that spends money changing.",
+        "evidence": ["supply-collaboration"]
+      },
+      {
+        "id": "ab-selection",
+        "text": "Would AeroTech's software choice influence supplier selection?",
+        "depth": "probing",
+        "trustDelta": 0,
+        "response": "Not directly. We don't mandate a CAD tool. We judge the capability the tools enable.",
+        "evidence": ["supply-no-mandate"]
+      },
+      {
+        "id": "ab-transformation",
+        "text": "What concerns customers when a supplier goes through a transformation?",
+        "depth": "probing",
+        "trustDelta": 0,
+        "response": "Delivery. During a transformation, delivery performance matters more to us than technology ambition.",
+        "evidence": ["supply-delivery-first"]
+      },
+      {
+        "id": "ab-challenge",
+        "text": "Which assumption should AeroTech challenge in its own thinking?",
+        "depth": "deep",
+        "requires": "ab-trends",
+        "trustDelta": 5,
+        "response": "That our expectations will stay where they are. Supplier digital requirements will look very different within the decade.",
+        "evidence": ["assume-customer-static"]
+      }
+    ]
+  },
+  {
+    "id": "senior-cad-engineer",
+    "name": "Senior CAD Engineer",
+    "shortName": "SCE",
+    "role": "Twenty years on CATIA; the go-to expert for tooling and part-family design.",
+    "influence": "Low",
+    "initialTrust": 45,
+    "category": "workforce",
+    "publicPosition": "Existing workflows work well today.",
+    "underlyingConcern": "Quietly favours retaining CATIA-derived workflows, and their own standing as the expert.",
+    "blindSpot": "Underestimates how hard it is becoming to recruit engineers who want to work in V5.",
+    "challengeQuestion": "Have you asked the people who actually use the software every day?",
+    "questions": [
+      {
+        "id": "sce-like",
+        "text": "Do you enjoy working in CATIA V5?",
+        "depth": "surface",
+        "trustDelta": 5,
+        "response": "It does everything we need. Our processes are proven, and the team knows them inside out.",
+        "evidence": []
+      },
+      {
+        "id": "sce-difficult",
+        "text": "What would make a migration difficult in practice?",
+        "depth": "probing",
+        "trustDelta": 0,
+        "response": "Today's workflows work well, but plenty of them are personal: templates, macros and part-family tables people built themselves. They live on individual machines.",
+        "evidence": ["wf-personal-workflows"]
+      },
+      {
+        "id": "sce-valuable",
+        "text": "Which workflows are most valuable to the business, even if nobody manages them?",
+        "depth": "probing",
+        "trustDelta": 5,
+        "response": "The post-processors. About 400 NC programs run through in-house macros nobody ever documented. I'd hate to see them lost.",
+        "evidence": ["mfg-hidden-knowledge"]
+      },
+      {
+        "id": "sce-colleagues",
+        "text": "How would your colleagues really respond to a migration?",
+        "depth": "deep",
+        "requires": "sce-difficult",
+        "trustDelta": -5,
+        "response": "Between us? Most of the senior team expect it to be scaled back or reversed. They'd go along with it, but slowly.",
+        "evidence": ["assume-acceptance"]
+      }
+    ]
+  },
+  {
+    "id": "graduate-engineer",
+    "name": "Graduate Engineer",
+    "shortName": "GRAD",
+    "role": "Second-year graduate in the design team.",
+    "influence": "Low",
+    "initialTrust": 60,
+    "category": "strategy",
+    "publicPosition": "Today's workflows may not suit future engineers.",
+    "underlyingConcern": "Building a career on tools the rest of the industry is leaving behind.",
+    "blindSpot": "Underestimates certification, process stability and the cost of disruption.",
+    "challengeQuestion": "Will your recommendation help AeroTech keep its next generation of engineers?",
+    "questions": [
+      {
+        "id": "grad-tools",
+        "text": "What do you think of the current tools?",
+        "depth": "surface",
+        "trustDelta": 0,
+        "response": "They're fine. A bit dated compared with what I used at university.",
+        "evidence": []
+      },
+      {
+        "id": "grad-attracts",
+        "text": "What attracts new engineers to an employer like AeroTech?",
+        "depth": "probing",
+        "trustDelta": 5,
+        "response": "Modern, connected tools signal a company that's going somewhere. Today's workflows won't suit the engineers you'll need to hire.",
+        "evidence": ["wf-graduate-appeal"]
+      },
+      {
+        "id": "grad-peers",
+        "text": "Why have people from your cohort turned down offers here?",
+        "depth": "probing",
+        "trustDelta": 0,
+        "response": "Two friends of mine said no last year. Both mentioned the software, which they saw as a dead end for their CVs.",
+        "evidence": ["wf-recruitment"]
+      },
+      {
+        "id": "grad-faster",
+        "text": "What would a new platform not fix?",
+        "depth": "deep",
+        "requires": "grad-attracts",
+        "trustDelta": 0,
+        "response": "Honestly? I'd assumed newer software would just make us all faster. I haven't thought much about what it wouldn't fix.",
+        "evidence": ["assume-productivity"]
       }
     ]
   }

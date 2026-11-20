@@ -79,8 +79,8 @@
 }
 
 .trust-open { background: var(--good); }
-.trust-cautious { background: var(--fair); }
-.trust-guarded { background: var(--poor); }
+.trust-neutral { background: var(--fair); }
+.trust-cautious { background: var(--poor); }
 .coverage-fill { background: var(--accent); }
 
 .trust-label {

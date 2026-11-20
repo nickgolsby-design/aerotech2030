@@ -7,6 +7,8 @@ import InvestigationSidebar from "./InvestigationSidebar.jsx";
 import { stakeholders, stakeholdersById } from "../data/stakeholders.js";
 import { platforms, criteria } from "../data/platformProfiles.js";
 import { evidenceById } from "../data/evidence.js";
+import { documents } from "../data/documents.js";
+import { foundVia } from "../data/sources.js";
 import { validateRecommendation } from "../engine/outcomeEngine.js";
 
 /** Investigation phase: tabbed main area plus an always-visible summary. */
@@ -19,7 +21,7 @@ export default function InvestigationWorkspace({ state, dispatch }) {
   const ready = validateRecommendation(state.recommendation).length === 0;
 
   const tabs = [
-    { id: "interviews", label: "Interviews" },
+    { id: "interviews", label: "Investigate" },
     { id: "evidence", label: `Evidence (${state.evidenceIds.length})` },
     { id: "comparison", label: `Comparison (${criteriaAssessed}/${criteria.length})` },
     { id: "recommendation", label: ready ? "Recommendation ✓" : "Recommendation" }
@@ -67,15 +69,19 @@ export default function InvestigationWorkspace({ state, dispatch }) {
               selected={stakeholdersById[state.selectedId] ?? null}
               trust={state.trust}
               interviews={state.interviews}
-              questionsLeft={state.questionsLeft}
+              documents={documents}
+              documentsRead={state.documentsRead}
+              actionsLeft={state.actionsLeft}
               onSelect={(stakeholderId) => dispatch({ type: "SELECT_STAKEHOLDER", stakeholderId })}
               onAsk={(stakeholderId, questionId) => dispatch({ type: "ASK", stakeholderId, questionId })}
+              onRead={(documentId) => dispatch({ type: "READ_DOCUMENT", documentId })}
             />
           )}
 
           {tab === "evidence" && (
             <EvidenceDashboard
               evidenceIds={state.evidenceIds}
+              foundBy={foundVia(state)}
               tags={state.tags}
               onTag={(evidenceId, tag) => dispatch({ type: "TAG_EVIDENCE", evidenceId, tag })}
             />

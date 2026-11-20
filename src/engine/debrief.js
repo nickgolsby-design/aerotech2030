@@ -2,6 +2,7 @@
 // Pure functions only, so they're unit-testable.
 import { evidence, categories } from "../data/evidence.js";
 import { stakeholders, stakeholdersById } from "../data/stakeholders.js";
+import { evidenceSources } from "../data/sources.js";
 import { criteria, platforms } from "../data/platformProfiles.js";
 import {
   STAY_PLATFORM,
@@ -18,6 +19,8 @@ import {
   changeScore,
   riskSeverity,
   getChallenge,
+  assessArgument,
+  defensiblePositions,
   verdictLabels
 } from "./outcomeEngine.js";
 import { HIGH_INFLUENCE } from "../data/gameConfig.js";
@@ -85,19 +88,11 @@ export function expertRecommendation() {
   };
 }
 
-/** Which question would have revealed each evidence item. */
-const evidenceQuestion = Object.fromEntries(
-  stakeholders.flatMap((s) =>
-    s.questions.flatMap((q) =>
-      q.evidence.map((id) => [id, { stakeholder: s, question: q }])
-    )
-  )
-);
-
+/** Critical evidence not found, with every route that would have revealed it. */
 export function missedCriticalEvidence(evidenceIds) {
   return evidence
     .filter((e) => e.critical && !evidenceIds.includes(e.id))
-    .map((e) => ({ ...e, ...evidenceQuestion[e.id] }));
+    .map((e) => ({ ...e, routes: evidenceSources[e.id] }));
 }
 
 // ---------------------------------------------------------------------------
@@ -108,14 +103,18 @@ function stakeholderAnalysis(state) {
   const interviewedIds = new Set(state.interviews.map((i) => i.stakeholderId));
   const highInfluence = stakeholders.filter((s) => s.influence >= HIGH_INFLUENCE);
   const missedHigh = highInfluence.filter((s) => !interviewedIds.has(s.id));
-  const leading = state.interviews.filter((i) => i.trustDelta <= -10);
+  const surface = state.interviews.filter(
+    (i) =>
+      stakeholdersById[i.stakeholderId].questions.find((q) => q.id === i.questionId)
+        .depth === "surface"
+  );
   const guarded = state.interviews.filter((i) => i.guarded);
   const asked = state.interviews.length;
 
   const score =
     0.4 * (1 - missedHigh.length / highInfluence.length) +
     0.3 * (interviewedIds.size / stakeholders.length) +
-    0.3 * (asked === 0 ? 0 : 1 - leading.length / asked);
+    0.3 * (asked === 0 ? 0 : 1 - surface.length / asked);
 
   const observations = [
     `You interviewed ${interviewedIds.size} of ${stakeholders.length} stakeholders.`
@@ -127,11 +126,11 @@ function stakeholderAnalysis(state) {
         .join(", ")}.`
     );
   }
-  if (leading.length > 0) {
+  if (surface.length > 0) {
     observations.push(
-      `${leading.length} of your questions ${
-        leading.length === 1 ? "was" : "were"
-      } leading or dismissive, which damaged trust.`
+      `${surface.length} of your questions ${
+        surface.length === 1 ? "was" : "were"
+      } generic and only drew out a public position.`
     );
   }
   if (guarded.length > 0) {
@@ -148,7 +147,7 @@ function stakeholderAnalysis(state) {
     score,
     observations,
     learningPoint:
-      "Map stakeholders by influence and interest early. Open, well-framed questions build the trust you need before critical information is shared."
+      "Map stakeholders by influence and interest early. Generic questions get public positions; specific questions about assumptions, dependencies and failure modes, followed up, reveal what really drives each stakeholder."
   };
 }
 
@@ -171,7 +170,7 @@ function requirementsCapture(state) {
     `You found ${criticalFound} of ${criticalTotal} critical evidence items, covering ${coveredCategories.size} of ${categories.length} areas.`,
     found === 0
       ? "You gathered no evidence to classify."
-      : `You classified ${tagged} of ${found} evidence items as requirements, risks or constraints.`
+      : `You classified ${tagged} of ${found} evidence items (driver, requirement, constraint, risk, workforce issue, opportunity or assumption).`
   ];
 
   return {
@@ -322,21 +321,27 @@ export function assessLearningOutcomes(state, outcome) {
   ].map((lo) => ({ ...lo, rating: rating(lo.score) }));
 }
 
-/** Each board challenge with the team's answer and the strongest answer. */
+/**
+ * Each board challenge: the position the team defended and how well, plus
+ * how defensible the other positions were given the same investigation.
+ */
 export function reviewChallengeAnswers(state) {
   return state.challengeIds.map((id) => {
     const challenge = getChallenge(id);
-    const chosen = challenge.options.find(
-      (o) => o.id === state.challengeAnswers[id]
+    const answer = state.challengeAnswers[id];
+    const defended = assessArgument(id, answer, state);
+    const alternatives = defensiblePositions(id, state).filter(
+      (a) => a.position.id !== answer.positionId
     );
-    const best = challenge.options.find((o) => o.quality === 1);
     return {
       id,
       stakeholder: stakeholdersById[challenge.stakeholderId].name,
       text: challenge.text,
-      chosen,
-      best,
-      wasBest: chosen?.id === best.id
+      tradeOff: challenge.tradeOff,
+      defended,
+      alternatives,
+      // The team's best-backed option, had it cited its best evidence.
+      bestAvailable: defensiblePositions(id, state)[0]
     };
   });
 }
@@ -361,6 +366,7 @@ export function buildResultsExport(state, outcome, assessment) {
     durationMinutes,
     investigation: {
       questionsUsed: state.interviews.length,
+      documentsReviewed: state.documentsRead.map((d) => d.documentId),
       stakeholdersInterviewed: new Set(state.interviews.map((i) => i.stakeholderId)).size,
       evidenceFound: state.evidenceIds.length,
       criticalEvidenceFound: Math.round(diligenceScore(state.evidenceIds) * 100) + "%",
@@ -385,8 +391,11 @@ export function buildResultsExport(state, outcome, assessment) {
       confidence: outcome.confidence,
       answers: reviewChallengeAnswers(state).map((a) => ({
         challenge: `${a.stakeholder}: ${a.text}`,
-        answer: a.chosen.text,
-        strongest: a.wasBest
+        position: a.defended.position.stance,
+        positionKind: a.defended.kind,
+        evidenceCited: a.defended.relevant.concat(a.defended.irrelevant),
+        strength: a.defended.strength,
+        rating: a.defended.rating
       }))
     },
     outcomes: {
